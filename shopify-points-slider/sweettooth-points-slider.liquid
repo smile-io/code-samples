@@ -1,0 +1,165 @@
+<script>
+(function() {
+
+  $(document).on('sweettooth-initialized', function() {
+
+    var customerPointsBalance = SweetTooth.customer.points_balance;
+
+    var sliderContainerHtml = `
+      <div class="order-summary__section order-summary__section--sweettooth-points-slider">
+        <h3 class="sweettooth-points-balance-heading">You have <span class="sweettooth-points-balance">${customerPointsBalance}</span> points</h3>
+        <div class="sweettooth-points-slider"
+          data-points-product-id=21
+        ></div>
+      </div>
+    `;
+    // $('.order-summary__section--discount').before(sliderContainerHtml);
+    var $sliderContainer = $($.parseHTML(sliderContainerHtml));
+    var $pointsSlider = $sliderContainer.find('.sweettooth-points-slider');
+
+    // Return if there is no sweettooth-tab div existing on page
+    // var $pointsSlider = $('.sweettooth-points-slider').first();
+    var pointsSliderData = $pointsSlider.data();
+    var pointsProductId = pointsSliderData.pointsProductId;
+
+    SweetTooth.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
+      var reward = pointsProduct.reward;
+      var min = pointsProduct.min || 0;
+      var max = pointsProduct.max || 0;
+      max = Math.max(SweetTooth.customer.points_balance, max);
+      var step = pointsProduct.step;
+      var multiplier = pointsProduct.multiplier;
+      var fulfillmentNameTemplate = reward.fulfillment_name_template;
+      var initialValue = min;
+
+      // TODO: Dry this up
+      var rewardValue = (initialValue / step) * multiplier;
+      var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
+
+      var sliderHtml =
+        `
+        <div class="sweettooth-redeem-amount-label">Redeem <span class="sweettooth-slider-value">${initialValue}</span> points</div>
+        <div class="fieldset">
+          <div class="field">
+            <div class="sweettooth-form">
+              <div class="sweettooth-range-input-container">
+                <input
+                  class="sweettooth-range-input"
+                  type="range"
+                  min="${min}"
+                  max="${max}"
+                  step="${step}"
+                  value="${initialValue}"
+                  data-orientation="horizontal"
+                >
+                <div class="sweettooth-reward-name">${rewardName}</div>
+              </div>
+              <div class="sweettooth-redeem-button-container">
+                <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default btn--disabled" disabled>
+                  <span class="btn__content visually-hidden-on-mobile">Redeem</span>
+                  <i class="btn__content shown-on-mobile icon icon--arrow"></i>
+                  <i class="btn__spinner icon icon--button-spinner"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        `;
+
+      $pointsSlider.on('input', '.sweettooth-range-input', function() {
+        var sliderValue = $(this).val();
+        $pointsSlider.find(".sweettooth-slider-value").html(sliderValue);
+
+        var rewardValue = (sliderValue / step) * multiplier;
+
+        // Update the reward name based on the slider value
+        var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
+        $pointsSlider.find(".sweettooth-reward-name").html(rewardName);
+
+        // Ensure the redeem button is disabled if slider value is 0
+        $redeemButton = $pointsSlider.find(".sweettooth-redeem-button");
+        if (rewardValue === 0) {
+          $redeemButton.addClass('btn--disabled');
+          $redeemButton.attr('disabled', true);
+        } else {
+          $redeemButton.removeClass('btn--disabled');
+          $redeemButton.attr('disabled', false);
+        }
+      });
+
+      $pointsSlider.on('click', '.sweettooth-redeem-button', function() {
+        var $redeemButton = $(this);
+        var sliderValue = $pointsSlider.find(".sweettooth-range-input").val();
+
+        var buttonLoadingClassName = 'btn--loading';
+        $redeemButton.addClass(buttonLoadingClassName);
+
+        SweetTooth.purchasePointsProduct(pointsProductId, { points_to_spend: sliderValue }).then(pointsPurchase => {
+          $redeemButton.removeClass(buttonLoadingClassName);
+
+          var $discountCodeInput = $("#checkout_reduction_code");
+          $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
+          $discountCodeInput.closest('form').find('button').click();
+
+          console.log("Applied " + pointsPurchase.fulfilled_reward.code + " to cart");
+        });
+      });
+
+      $pointsSlider.append(sliderHtml);
+      $('.order-summary__section--discount').before($sliderContainer);
+
+      $pointsSlider.addClass("sweettooth-rendered");
+    }); // fetchPointsProduct
+  });
+}());
+</script>
+
+<style>
+  .sweettooth-points-balance-heading {
+    margin-bottom: 1.5em;
+  }
+
+  .sweettooth-redeem-amount-label {
+    padding-bottom: 5px;
+  }
+
+  .sweettooth-points-slider.sweettooth-rendered {
+  }
+
+  .sweettooth-points-slider.sweettooth-rendered .sweettooth-form {
+    display: -webkit-flex; /* Safari */
+    display: flex;
+    -webkit-flex-direction: row; /* Safari */
+    flex-direction:         row;
+  }
+
+  .sweettooth-points-slider.sweettooth-rendered .sweettooth-range-input-container {
+    flex-grow: 1;
+    margin-right: 5px;
+  }
+
+  .sweettooth-points-slider.sweettooth-rendered .sweettooth-range-input-container .sweettooth-range-input {
+    margin: 12px 0;
+  }
+
+  .sweettooth-points-slider.sweettooth-rendered .sweettooth-redeem-button-container {
+    flex-shrink: 1;
+  }
+
+  .sweettooth-points-slider.sweettooth-rendered .sweettooth-redeem-button {
+    height: 42px;
+  }
+
+  .sweettooth-points-slider.sweettooth-rendered .sweettooth-reward-name {
+    text-align: center;
+    padding-top: 5px;
+  }
+
+  .sweettooth-points-slider.sweettooth-rendered .sweettooth-range-input {
+    display: block;
+    width: 100%;
+
+    /* Fixes shopify checkout */
+    -webkit-appearance: slider-horizontal;
+  }
+</style>
