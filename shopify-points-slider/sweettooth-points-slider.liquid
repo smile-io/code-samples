@@ -1,161 +1,243 @@
 <script>
-(function() {
+  (function() {
+    /**
+     * REPLACE WITH THE POINTS PRODUCT FROM YOUR ACCOUNT.
+     * Learn more at https://docs.smile.io
+     */
+    var pointsProductId = null;
 
-  $(document).on('sweettooth-initialized', function() {
+    if (!pointsProductId) {
+      console.error("The Sweet Tooth pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io");
+      return;
+    }
 
-    var customerPointsBalance = SweetTooth.customer.points_balance;
+    /**
+     * Build up the order summary section for our points slider to live in.
+     * This is built up in memory so we don't add anything to the dom until
+     * all html content is populated with data from the API.
+     */
+    var buildPointsSliderOrderSummarySection = function() {
+      var customerPointsBalance = SweetTooth.customer.points_balance;
 
-    var sliderContainerHtml = `
-      <div class="order-summary__section order-summary__section--sweettooth-points-slider">
-        <h3 class="sweettooth-points-balance-heading">You have <span class="sweettooth-points-balance">${customerPointsBalance}</span> points</h3>
-        <div class="sweettooth-points-slider"
-          data-points-product-id=21
-        ></div>
-      </div>
-    `;
-    // $('.order-summary__section--discount').before(sliderContainerHtml);
-    var $sliderContainer = $($.parseHTML(sliderContainerHtml));
-    var $pointsSlider = $sliderContainer.find('.sweettooth-points-slider');
+      var sliderContainerHtml = ' \
+        <div class="order-summary__section order-summary__section--sweettooth-points-slider"> \
+          <h3 class="sweettooth-points-balance-heading">You have <span class="sweettooth-points-balance">' + customerPointsBalance + '</span> points</h3> \
+          <div class="sweettooth-points-slider" \
+            data-points-product-id=' + pointsProductId + ' \
+          ></div> \
+        </div> \
+      ';
+      var $sliderContainer = $($.parseHTML(sliderContainerHtml));
 
-    // Return if there is no sweettooth-tab div existing on page
-    // var $pointsSlider = $('.sweettooth-points-slider').first();
-    var pointsSliderData = $pointsSlider.data();
-    var pointsProductId = pointsSliderData.pointsProductId;
+      return $sliderContainer;
+    };
 
-    SweetTooth.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
-      var reward = pointsProduct.reward;
-      var min = pointsProduct.min || 0;
-      var max = pointsProduct.max || 0;
-      max = Math.max(SweetTooth.customer.points_balance, max);
-      var step = pointsProduct.step;
-      var multiplier = pointsProduct.multiplier;
-      var fulfillmentNameTemplate = reward.fulfillment_name_template;
-      var initialValue = min;
+    $(document).on('sweettooth-initialized', function() {
 
-      // TODO: Dry this up
-      var rewardValue = (initialValue / step) * multiplier;
-      var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
+      var $sliderContainer = buildPointsSliderOrderSummarySection();
+      var $pointsSlider = $sliderContainer.find('.sweettooth-points-slider');
+      var pointsSliderData = $pointsSlider.data();
+      var pointsProductId = pointsSliderData.pointsProductId;
 
-      var sliderHtml =
-        `
-        <div class="sweettooth-redeem-amount-label">Redeem <span class="sweettooth-slider-value">${initialValue}</span> points</div>
-        <div class="fieldset">
-          <div class="field">
-            <div class="sweettooth-form">
-              <div class="sweettooth-range-input-container">
-                <input
-                  class="sweettooth-range-input"
-                  type="range"
-                  min="${min}"
-                  max="${max}"
-                  step="${step}"
-                  value="${initialValue}"
-                  data-orientation="horizontal"
-                >
-                <div class="sweettooth-reward-name">${rewardName}</div>
-              </div>
-              <div class="sweettooth-redeem-button-container">
-                <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default btn--disabled" disabled>
-                  <span class="btn__content visually-hidden-on-mobile">Redeem</span>
-                  <i class="btn__content shown-on-mobile icon icon--arrow"></i>
-                  <i class="btn__spinner icon icon--button-spinner"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        `;
-
-      $pointsSlider.on('input', '.sweettooth-range-input', function() {
-        var sliderValue = $(this).val();
-        $pointsSlider.find(".sweettooth-slider-value").html(sliderValue);
-
-        var rewardValue = (sliderValue / step) * multiplier;
-
-        // Update the reward name based on the slider value
-        var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
-        $pointsSlider.find(".sweettooth-reward-name").html(rewardName);
-
-        // Ensure the redeem button is disabled if slider value is 0
-        $redeemButton = $pointsSlider.find(".sweettooth-redeem-button");
-        if (rewardValue === 0) {
-          $redeemButton.addClass('btn--disabled');
-          $redeemButton.attr('disabled', true);
-        } else {
-          $redeemButton.removeClass('btn--disabled');
-          $redeemButton.attr('disabled', false);
+      SweetTooth.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
+        if (pointsProduct.exchange_type !== "variable") {
+          console.error("Oops! The Sweet Tooth points product you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a points product that supports variable reward values. Learn more at https://docs.smile.io");
+          return;
         }
-      });
 
-      $pointsSlider.on('click', '.sweettooth-redeem-button', function() {
-        var $redeemButton = $(this);
-        var sliderValue = $pointsSlider.find(".sweettooth-range-input").val();
+        var reward = pointsProduct.reward;
+        var min = pointsProduct.min || 0;
+        var max = pointsProduct.max || 0;
+        var step = pointsProduct.step;
+        var multiplier = pointsProduct.multiplier;
+        var fulfillmentNameTemplate = reward.fulfillment_name_template;
+        var initialSliderValue = min;
 
-        var buttonLoadingClassName = 'btn--loading';
-        $redeemButton.addClass(buttonLoadingClassName);
+        // Cap max slider value at the number of points the customer has
+        max = Math.max(SweetTooth.customer.points_balance, max);
 
-        SweetTooth.purchasePointsProduct(pointsProductId, { points_to_spend: sliderValue }).then(pointsPurchase => {
-          $redeemButton.removeClass(buttonLoadingClassName);
+        var rewardValue = (initialSliderValue / step) * multiplier;
+        var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
 
-          var $discountCodeInput = $("#checkout_reduction_code");
-          $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
-          $discountCodeInput.closest('form').find('button').click();
+        var sliderHtml = ' \
+          <div class="sweettooth-redeem-amount-label">Redeem <span class="sweettooth-slider-value">' + initialSliderValue + '</span> points</div> \
+          <div class="fieldset"> \
+            <div class="field"> \
+              <div class="sweettooth-form"> \
+                <div class="sweettooth-range-input-container"> \
+                  <input \
+                    class="sweettooth-range-input" \
+                    type="range" \
+                    min="' + min + '" \
+                    max="' + max + '" \
+                    step="' + step + '" \
+                    value="' + initialSliderValue + '" \
+                    data-orientation="horizontal" \
+                  > \
+                  <div class="sweettooth-reward-name">' + rewardName + '</div> \
+                </div> \
+                <div class="sweettooth-redeem-button-container"> \
+                  <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default btn--disabled" disabled> \
+                    <span class="btn__content visually-hidden-on-mobile">Redeem</span> \
+                    <i class="btn__content shown-on-mobile icon icon--arrow"></i> \
+                    <i class="btn__spinner icon icon--button-spinner"></i> \
+                  </button> \
+                </div> \
+              </div> \
+              <p class="field__message field__message--error sweettooth-points-slider-error">Something went wrong spending your points. Please try again.</p> \
+            </div> \
+          </div> \
+          ';
 
-          console.log("Applied " + pointsPurchase.fulfilled_reward.code + " to cart");
+        /**
+         * Add slider html to the points slider container
+         */
+        $pointsSlider.append(sliderHtml);
+
+        /**
+         * Handle slider value change events
+         *
+         * Listening on two events:
+         *   input - To update values as the customer is sliding the slider
+         *   change - To update values when the slider is changed via javascript
+         *
+         * Source: First comment on this answer http://stackoverflow.com/a/19067260/540194
+         */
+        $pointsSlider.on('input change', '.sweettooth-range-input', function() {
+          var sliderValue = $(this).val();
+          var rewardValue = (sliderValue / step) * multiplier;
+
+          /**
+           * Update points to be spent based on slider value
+           */
+          $pointsSlider.find(".sweettooth-slider-value").html(sliderValue);
+
+          /**
+           * Update reward name based on the slider value
+           */
+          var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
+          $pointsSlider.find(".sweettooth-reward-name").html(rewardName);
+
+          /**
+           * Ensure the redeem button is disabled if the slider
+           * value is 0.
+           */
+          $redeemButton = $pointsSlider.find(".sweettooth-redeem-button");
+          if (rewardValue === 0) {
+            $redeemButton.addClass('btn--disabled');
+            $redeemButton.attr('disabled', true);
+          } else {
+            $redeemButton.removeClass('btn--disabled');
+            $redeemButton.attr('disabled', false);
+          }
         });
-      });
 
-      $pointsSlider.append(sliderHtml);
-      $('.order-summary__section--discount').before($sliderContainer);
+        /**
+         * Handle redeem button click events
+         */
+        $pointsSlider.on('click', '.sweettooth-redeem-button', function() {
+          var $redeemButton = $(this);
+          var sliderValue = $pointsSlider.find(".sweettooth-range-input").val();
 
-      $pointsSlider.addClass("sweettooth-rendered");
-    }); // fetchPointsProduct
-  });
-}());
+          // Start loading indicator
+          $redeemButton.addClass('btn--loading');
+
+          /**
+           * Hit the Sweet Tooth API to spend customer's points
+           */
+          SweetTooth.purchasePointsProduct(pointsProductId, { points_to_spend: sliderValue }).then(function(pointsPurchase) {
+            var $discountCodeInput = $("#checkout_reduction_code");
+
+            // Clear the field error if there was one previously
+            $pointsSlider.find('.field').removeClass('field--error');
+
+            // Apply the discount code to the checkout's form input
+            $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
+
+            // Immediately update the customers points balance
+            $(".sweettooth-points-balance").html(SweetTooth.customer.points_balance - sliderValue);
+
+            // Update customer's points balance based on the server's value.
+            // This should be the same as the above but always nice to confirm.
+            SweetTooth.fetchCustomer().then(function(customer) {
+              $(".sweettooth-points-balance").html(customer.points_balance);
+            });
+
+            // Submit the form for the discount code
+            $discountCodeInput.closest('form').find('button').click();
+          }).catch(function(err) {
+            console.error("Something went wrong when purchasing points product with id " + pointsProductId + ".");
+            $pointsSlider.find('.field').addClass('field--error');
+          }).then(function() {
+            // This block runs whether the call succeeds or fails, kind of like finally() in other languages.
+            // Source: http://stackoverflow.com/a/35999141/540194
+
+            $redeemButton.removeClass('btn--loading');
+
+            var $rangeInput = $pointsSlider.find('.sweettooth-range-input');
+            $rangeInput.val(0);
+            $rangeInput.change();
+          });
+        });
+
+        /**
+         * Insert the points slider order summary section above the discount code
+         * section.
+         */
+        $('.order-summary__section--discount').before($sliderContainer);
+
+      }).catch(function(err) {
+        console.error("Something went wrong fetching the Sweet Tooth points product. Points slider will not be rendered. Learn more at https://docs.smile.io");
+      }); // fetchPointsProduct
+    });
+  }());
 </script>
 
 <style>
   .sweettooth-points-balance-heading {
-    margin-bottom: 1.5em;
+    margin-bottom: 20px;
   }
 
   .sweettooth-redeem-amount-label {
     padding-bottom: 5px;
   }
 
-  .sweettooth-points-slider.sweettooth-rendered {
-  }
-
-  .sweettooth-points-slider.sweettooth-rendered .sweettooth-form {
-    display: -webkit-flex; /* Safari */
+  .sweettooth-points-slider .sweettooth-form {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    -webkit-flex-direction: row; /* Safari */
-    flex-direction:         row;
+    -webkit-box-orient:         horizontal;
+    -webkit-box-direction:         normal;
+        -ms-flex-direction:         row;
+            flex-direction:         row;
   }
 
-  .sweettooth-points-slider.sweettooth-rendered .sweettooth-range-input-container {
-    flex-grow: 1;
+  .sweettooth-points-slider .sweettooth-range-input-container {
+    -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
     margin-right: 5px;
   }
 
-  .sweettooth-points-slider.sweettooth-rendered .sweettooth-range-input-container .sweettooth-range-input {
+  .sweettooth-points-slider .sweettooth-range-input-container .sweettooth-range-input {
     margin: 12px 0;
   }
 
-  .sweettooth-points-slider.sweettooth-rendered .sweettooth-redeem-button-container {
-    flex-shrink: 1;
+  .sweettooth-points-slider .sweettooth-redeem-button-container {
+    -ms-flex-negative: 1;
+        flex-shrink: 1;
   }
 
-  .sweettooth-points-slider.sweettooth-rendered .sweettooth-redeem-button {
+  .sweettooth-points-slider .sweettooth-redeem-button {
     height: 42px;
   }
 
-  .sweettooth-points-slider.sweettooth-rendered .sweettooth-reward-name {
+  .sweettooth-points-slider .sweettooth-reward-name {
     text-align: center;
     padding-top: 5px;
   }
 
-  .sweettooth-points-slider.sweettooth-rendered .sweettooth-range-input {
+  .sweettooth-points-slider .sweettooth-range-input {
     display: block;
     width: 100%;
 
