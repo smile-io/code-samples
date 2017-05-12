@@ -1,0 +1,160 @@
+<script>
+  (function() {
+    /**
+     * Build up the order summary section for our points slider to live in.
+     * This is built up in memory so we don't add anything to the dom until
+     * all html content is populated with data from the API.
+     */
+    var buildPointsProductsDropdownOrderSummarySection = function() {
+      var customerPointsBalance = SweetTooth.customer.points_balance;
+
+      var sliderContainerHtml = ' \
+        <div class="order-summary__section order-summary__section--sweettooth-points-products-dropdown"> \
+          <h3 class="sweettooth-points-balance-heading">You have <span class="sweettooth-points-balance">' + customerPointsBalance + '</span> points</h3> \
+          <div class="sweettooth-points-products-dropdown"></div> \
+        </div> \
+      ';
+      var $sliderContainer = $($.parseHTML(sliderContainerHtml));
+
+      return $sliderContainer;
+    };
+
+    $(document).on('sweettooth-initialized', function() {
+
+      var $dropdownContainer = buildPointsProductsDropdownOrderSummarySection();
+      var $pointsProductsDropdown = $dropdownContainer.find('.sweettooth-points-products-dropdown');
+
+
+
+      SweetTooth.fetchPointsProducts({ exchange_type: 'fixed' }).then(function(pointsProducts) {
+
+        let dropdownHtml = `
+        <div class="sweettooth-redeem-label">Redeem points for rewards on this order</div>
+        <div class="fieldset">
+
+          <div data-address-field="province" class="field field--required field--show-floating-label">
+            <div class="field__input-btn-wrapper">
+              <div class="field__input-wrapper field__input-wrapper--select">
+                <label class="field__label">Rewards</label>
+                <select placeholder="Rewards" class="sweettooth-points-products-select field__input field__input--select">
+        `;
+
+        let affordableRewards = $.grep(pointsProducts, function(pointsProduct) {
+          return (pointsProduct.points_cost <= SweetTooth.customer.points_balance);
+        });
+
+        let unaffordableRewards = $.grep(pointsProducts, function(pointsProduct) {
+          return (pointsProduct.points_cost > SweetTooth.customer.points_balance);
+        });
+
+        $.each(affordableRewards, function(index, pointsProduct) {
+          let reward = pointsProduct.reward;
+          dropdownHtml += `<option data-id="${pointsProduct.id}" value="${reward.name}">${reward.name} • ${pointsProduct.exchange_description}</option>`;
+        });
+
+        $.each(unaffordableRewards, function(index, pointsProduct) {
+          let reward = pointsProduct.reward;
+          dropdownHtml += `<option data-id="${pointsProduct.id}" value="${reward.name}" disabled>${reward.name} • ${pointsProduct.exchange_description}</option>`;
+        });
+
+        dropdownHtml += `
+                </select>
+              </div>
+              <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default"> \
+                <span class="btn__content visually-hidden-on-mobile">Redeem</span>
+                <i class="btn__content shown-on-mobile icon icon--arrow"></i>
+                <i class="btn__spinner icon icon--button-spinner"></i>
+              </button>
+            </div>
+            <p class="field__message field__message--error sweettooth-points-products-dropdown-error">Something went wrong spending your points. Please try again.</p> \
+          </div>
+        </div>
+        `;
+
+        /**
+         * Add slider html to the points slider container
+         */
+        $pointsProductsDropdown.append(dropdownHtml);
+
+        /**
+         * Handle redeem button click events
+         */
+        $pointsProductsDropdown.on('click', '.sweettooth-redeem-button', function() {
+          var $redeemButton = $(this);
+          let $selectedPointsProduct = $pointsProductsDropdown.find(".sweettooth-points-products-select :selected");
+          let pointsProductId = $selectedPointsProduct.data('id');
+
+          // Start loading indicator
+          $redeemButton.addClass('btn--loading');
+
+          /**
+           * Hit the Sweet Tooth API to spend customer's points
+           */
+          SweetTooth.purchasePointsProduct(pointsProductId).then(function(pointsPurchase) {
+            var $discountCodeInput = $("#checkout_reduction_code");
+
+            // Clear the field error if there was one previously
+            $pointsProductsDropdown.find('.field').removeClass('field--error');
+
+            // Apply the discount code to the checkout's form input
+            $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
+
+            // Update customer's points balance based on the server's value.
+            // This should be the same as the above but always nice to confirm.
+            SweetTooth.fetchCustomer().then(function(customer) {
+              $(".sweettooth-points-balance").html(customer.points_balance);
+            });
+
+            // Submit the form for the discount code
+            $discountCodeInput.closest('form').find('button').click();
+          }).catch(function(err) {
+            console.error("Something went wrong when purchasing points product with id " + pointsProductId + ".");
+            $pointsProductsDropdown.find('.field').addClass('field--error');
+          }).then(function() {
+            // This block runs whether the call succeeds or fails, kind of like finally() in other languages.
+            // Source: http://stackoverflow.com/a/35999141/540194
+
+            $redeemButton.removeClass('btn--loading');
+          });
+        });
+
+        /**
+         * Insert the points slider order summary section above the discount code
+         * section.
+         */
+        $('.order-summary__section--discount').before($dropdownContainer);
+      }); // fetchPointsProducts
+    });
+  }());
+</script>
+
+<style>
+  .sweettooth-points-products-dropdown {
+    margin: 10px 0;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-redeem-label {
+    margin-bottom: 10px;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-form {
+    display: -webkit-flex; /* Safari */
+    display: flex;
+    -webkit-flex-direction: row; /* Safari */
+    flex-direction:         row;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-form .sweettooth-select-container {
+    flex-grow: 1;
+    margin-right: 15px;
+    margin-bottom: 20px;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-form .sweettooth-range-input {
+    margin: 20px 0;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-redeem-button-container {
+    flex-shrink: 1;
+  }
+</style>
