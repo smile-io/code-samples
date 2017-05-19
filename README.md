@@ -1,3 +1,5 @@
+[Welcome](welcome-developers.png)
+
 ## Welcome developers
 
 This repos is home to a growing number of code samples to help integrate Smile deeply into your store. We hope these samples save you time and help document best practices. PRs are always welcome to help improve these samples for everyone.
