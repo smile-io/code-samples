@@ -1,4 +1,4 @@
-![Welcome](welcome-developers.png)
+![Welcome](smile-dev.png)
 
 ## Welcome developers
 
