@@ -7,7 +7,7 @@
     var pointsProductId = null;
 
     if (!pointsProductId) {
-      console.error("The Sweet Tooth pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io");
+      console.error("The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io");
       return;
     }
 
@@ -41,7 +41,7 @@
 
       SweetTooth.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
         if (pointsProduct.exchange_type !== "variable") {
-          console.error("Oops! The Sweet Tooth points product you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a points product that supports variable reward values. Learn more at https://docs.smile.io");
+          console.error("Oops! The Smile.io points product you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a points product that supports variable reward values. Learn more at https://docs.smile.io");
           return;
         }
 
@@ -143,7 +143,7 @@
           $redeemButton.addClass('btn--loading');
 
           /**
-           * Hit the Sweet Tooth API to spend customer's points
+           * Hit the Smile.io API to spend customer's points
            */
           SweetTooth.purchasePointsProduct(pointsProductId, { points_to_spend: sliderValue }).then(function(pointsPurchase) {
             var $discountCodeInput = $("#checkout_reduction_code");
@@ -187,7 +187,7 @@
         $('.order-summary__section--discount').before($sliderContainer);
 
       }).catch(function(err) {
-        console.error("Something went wrong fetching the Sweet Tooth points product. Points slider will not be rendered. Learn more at https://docs.smile.io");
+        console.error("Something went wrong fetching the Smile.io points product. Points slider will not be rendered. Learn more at https://docs.smile.io");
       }); // fetchPointsProduct
     });
   }());
