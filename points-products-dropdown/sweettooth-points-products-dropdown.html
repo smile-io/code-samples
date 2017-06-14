@@ -88,7 +88,7 @@
           $redeemButton.addClass('btn--loading');
 
           /**
-           * Hit the Sweet Tooth API to spend customer's points
+           * Hit the Smile.io API to spend customer's points
            */
           SweetTooth.purchasePointsProduct(pointsProductId).then(function(pointsPurchase) {
             var $discountCodeInput = $("#checkout_reduction_code");
