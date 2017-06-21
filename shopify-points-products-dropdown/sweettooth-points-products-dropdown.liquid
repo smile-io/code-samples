@@ -38,11 +38,11 @@
         `;
 
         let affordableRewards = $.grep(pointsProducts, function(pointsProduct) {
-          return (pointsProduct.points_cost <= SweetTooth.customer.points_balance);
+          return (pointsProduct.points_price <= SweetTooth.customer.points_balance);
         });
 
         let unaffordableRewards = $.grep(pointsProducts, function(pointsProduct) {
-          return (pointsProduct.points_cost > SweetTooth.customer.points_balance);
+          return (pointsProduct.points_price > SweetTooth.customer.points_balance);
         });
 
         $.each(affordableRewards, function(index, pointsProduct) {
