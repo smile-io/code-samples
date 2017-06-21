@@ -51,13 +51,15 @@
         var step = pointsProduct.variable_points_step;
         var stepRewardValue = pointsProduct.variable_points_step_reward_value;
         var fulfillmentNameTemplate = reward.fulfillment_name_template;
+        var currencySymbol = reward.currency_symbol;
         var initialSliderValue = min;
 
         // Cap max slider value at the number of points the customer has
         max = Math.max(SweetTooth.customer.points_balance, max);
 
         var rewardValue = (initialSliderValue / step) * stepRewardValue;
-        var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
+        var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{format_currency value currency_symbol}}"{% endraw %}, rewardValue);
+        var displayReward = currencySymbol + rewardName;
 
         var sliderHtml = ' \
           <div class="sweettooth-redeem-amount-label">Redeem <span class="sweettooth-slider-value">' + initialSliderValue + '</span> points</div> \
@@ -74,7 +76,7 @@
                     value="' + initialSliderValue + '" \
                     data-orientation="horizontal" \
                   > \
-                  <div class="sweettooth-reward-name">' + rewardName + '</div> \
+                  <div class="sweettooth-reward-name">' + displayReward + '</div> \
                 </div> \
                 <div class="sweettooth-redeem-button-container"> \
                   <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default btn--disabled" disabled> \
@@ -115,8 +117,9 @@
           /**
            * Update reward name based on the slider value
            */
-          var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
-          $pointsSlider.find(".sweettooth-reward-name").html(rewardName);
+          var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{format_currency value currency_symbol}}"{% endraw %}, rewardValue);
+          var displayReward = currencySymbol + rewardName;
+          $pointsSlider.find(".sweettooth-reward-name").html(displayReward);
 
           /**
            * Ensure the redeem button is disabled if the slider
