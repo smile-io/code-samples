@@ -46,18 +46,20 @@
         }
 
         var reward = pointsProduct.reward;
-        var min = pointsProduct.min || 0;
-        var max = pointsProduct.max || 0;
-        var step = pointsProduct.step;
-        var multiplier = pointsProduct.multiplier;
+        var min = pointsProduct.variable_points_min || 0;
+        var max = pointsProduct.variable_points_max || 0;
+        var step = pointsProduct.variable_points_step;
+        var stepRewardValue = pointsProduct.variable_points_step_reward_value;
         var fulfillmentNameTemplate = reward.fulfillment_name_template;
+        var currencySymbol = reward.currency_symbol;
         var initialSliderValue = min;
 
         // Cap max slider value at the number of points the customer has
         max = Math.max(SweetTooth.customer.points_balance, max);
 
-        var rewardValue = (initialSliderValue / step) * multiplier;
-        var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
+        var rewardValue = (initialSliderValue / step) * stepRewardValue;
+        var rewardName = fulfillmentNameTemplate.replace("{{format_currency value currency_symbol}}", rewardValue);
+        var displayReward = currencySymbol + rewardName;
 
         var sliderHtml = ' \
           <div class="sweettooth-redeem-amount-label">Redeem <span class="sweettooth-slider-value">' + initialSliderValue + '</span> points</div> \
@@ -74,7 +76,7 @@
                     value="' + initialSliderValue + '" \
                     data-orientation="horizontal" \
                   > \
-                  <div class="sweettooth-reward-name">' + rewardName + '</div> \
+                  <div class="sweettooth-reward-name">' + displayReward + '</div> \
                 </div> \
                 <div class="sweettooth-redeem-button-container"> \
                   <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default btn--disabled" disabled> \
@@ -105,7 +107,7 @@
          */
         $pointsSlider.on('input change', '.sweettooth-range-input', function() {
           var sliderValue = $(this).val();
-          var rewardValue = (sliderValue / step) * multiplier;
+          var rewardValue = (sliderValue / step) * stepRewardValue;
 
           /**
            * Update points to be spent based on slider value
@@ -115,8 +117,9 @@
           /**
            * Update reward name based on the slider value
            */
-          var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{value}}"{% endraw %}, rewardValue);
-          $pointsSlider.find(".sweettooth-reward-name").html(rewardName);
+          var rewardName = fulfillmentNameTemplate.replace("{{format_currency value currency_symbol}}", rewardValue);
+          var displayReward = currencySymbol + rewardName;
+          $pointsSlider.find(".sweettooth-reward-name").html(displayReward);
 
           /**
            * Ensure the redeem button is disabled if the slider
@@ -146,13 +149,8 @@
            * Hit the Smile.io API to spend customer's points
            */
           SweetTooth.purchasePointsProduct(pointsProductId, { points_to_spend: sliderValue }).then(function(pointsPurchase) {
-            var $discountCodeInput = $("#checkout_reduction_code");
-
             // Clear the field error if there was one previously
             $pointsSlider.find('.field').removeClass('field--error');
-
-            // Apply the discount code to the checkout's form input
-            $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
 
             // Immediately update the customers points balance
             $(".sweettooth-points-balance").html(SweetTooth.customer.points_balance - sliderValue);
@@ -162,9 +160,6 @@
             SweetTooth.fetchCustomer().then(function(customer) {
               $(".sweettooth-points-balance").html(customer.points_balance);
             });
-
-            // Submit the form for the discount code
-            $discountCodeInput.closest('form').find('button').click();
           }).catch(function(err) {
             console.error("Something went wrong when purchasing points product with id " + pointsProductId + ".");
             $pointsSlider.find('.field').addClass('field--error');
@@ -206,16 +201,16 @@
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient:         horizontal;
-    -webkit-box-direction:         normal;
-        -ms-flex-direction:         row;
-            flex-direction:         row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
   }
 
   .sweettooth-points-slider .sweettooth-range-input-container {
     -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
     margin-right: 5px;
   }
 
@@ -225,7 +220,7 @@
 
   .sweettooth-points-slider .sweettooth-redeem-button-container {
     -ms-flex-negative: 1;
-        flex-shrink: 1;
+    flex-shrink: 1;
   }
 
   .sweettooth-points-slider .sweettooth-redeem-button {
