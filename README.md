@@ -13,4 +13,4 @@ This repos is home to a growing number of code samples to help integrate Smile d
 
 ## Contributing
 
-We need you! This repo is built to make developer lives easier while building with Smile. If you have new examples, improvements to existing ones, or anything else you think will help others please submit a PR so we can get the conversations going. 🙏
+We need you! This repo is built to make developer lives easier while building with Smile. If you have new examples, improvements to existing ones, or anything else you think will help others please submit a PR so we can get the conversations going 🙏
