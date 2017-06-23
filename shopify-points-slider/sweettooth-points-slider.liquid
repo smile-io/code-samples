@@ -7,7 +7,7 @@
     var pointsProductId = null;
 
     if (!pointsProductId) {
-      console.error("The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io");
+      console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io.');
       return;
     }
 
@@ -40,7 +40,7 @@
       var pointsProductId = pointsSliderData.pointsProductId;
 
       SweetTooth.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
-        if (pointsProduct.exchange_type !== "variable") {
+        if (pointsProduct.exchange_type !== 'variable') {
           console.error("Oops! The Smile.io points product you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a points product that supports variable reward values. Learn more at https://docs.smile.io");
           return;
         }
@@ -112,20 +112,20 @@
           /**
            * Update points to be spent based on slider value
            */
-          $pointsSlider.find(".sweettooth-slider-value").html(sliderValue);
+          $pointsSlider.find('.sweettooth-slider-value').html(sliderValue);
 
           /**
            * Update reward name based on the slider value
            */
           var rewardName = fulfillmentNameTemplate.replace({% raw %}"{{format_currency value currency_symbol}}"{% endraw %}, rewardValue);
           var displayReward = currencySymbol + rewardName;
-          $pointsSlider.find(".sweettooth-reward-name").html(displayReward);
+          $pointsSlider.find('.sweettooth-reward-name').html(displayReward);
 
           /**
            * Ensure the redeem button is disabled if the slider
            * value is 0.
            */
-          $redeemButton = $pointsSlider.find(".sweettooth-redeem-button");
+          $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
           if (rewardValue === 0) {
             $redeemButton.addClass('btn--disabled');
             $redeemButton.attr('disabled', true);
@@ -140,7 +140,7 @@
          */
         $pointsSlider.on('click', '.sweettooth-redeem-button', function() {
           var $redeemButton = $(this);
-          var sliderValue = $pointsSlider.find(".sweettooth-range-input").val();
+          var sliderValue = $pointsSlider.find('.sweettooth-range-input').val();
 
           // Start loading indicator
           $redeemButton.addClass('btn--loading');
@@ -149,7 +149,7 @@
            * Hit the Smile.io API to spend customer's points
            */
           SweetTooth.purchasePointsProduct(pointsProductId, { points_to_spend: sliderValue }).then(function(pointsPurchase) {
-            var $discountCodeInput = $("#checkout_reduction_code");
+            var $discountCodeInput = $('#checkout_reduction_code');
 
             // Clear the field error if there was one previously
             $pointsSlider.find('.field').removeClass('field--error');
@@ -158,18 +158,18 @@
             $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
 
             // Immediately update the customers points balance
-            $(".sweettooth-points-balance").html(SweetTooth.customer.points_balance - sliderValue);
+            $('.sweettooth-points-balance').html(SweetTooth.customer.points_balance - sliderValue);
 
             // Update customer's points balance based on the server's value.
             // This should be the same as the above but always nice to confirm.
             SweetTooth.fetchCustomer().then(function(customer) {
-              $(".sweettooth-points-balance").html(customer.points_balance);
+              $('.sweettooth-points-balance').html(customer.points_balance);
             });
 
             // Submit the form for the discount code
             $discountCodeInput.closest('form').find('button').click();
           }).catch(function(err) {
-            console.error("Something went wrong when purchasing points product with id " + pointsProductId + ".");
+            console.error('Something went wrong when purchasing points product with id ' + pointsProductId + '.');
             $pointsSlider.find('.field').addClass('field--error');
           }).then(function() {
             // This block runs whether the call succeeds or fails, kind of like finally() in other languages.
@@ -190,7 +190,7 @@
         $('.order-summary__section--discount').before($sliderContainer);
 
       }).catch(function(err) {
-        console.error("Something went wrong fetching the Smile.io points product. Points slider will not be rendered. Learn more at https://docs.smile.io");
+        console.error('Something went wrong fetching the Smile.io points product. Points slider will not be rendered. Learn more at https://docs.smile.io');
       }); // fetchPointsProduct
     });
   }());
@@ -209,16 +209,16 @@
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient:         horizontal;
-    -webkit-box-direction:         normal;
-        -ms-flex-direction:         row;
-            flex-direction:         row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
   }
 
   .sweettooth-points-slider .sweettooth-range-input-container {
     -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
     margin-right: 5px;
   }
 
@@ -228,7 +228,7 @@
 
   .sweettooth-points-slider .sweettooth-redeem-button-container {
     -ms-flex-negative: 1;
-        flex-shrink: 1;
+    flex-shrink: 1;
   }
 
   .sweettooth-points-slider .sweettooth-redeem-button {
