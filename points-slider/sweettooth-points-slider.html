@@ -46,10 +46,10 @@
         }
 
         var reward = pointsProduct.reward;
-        var min = pointsProduct.min || 0;
-        var max = pointsProduct.max || 0;
-        var step = pointsProduct.step;
-        var multiplier = pointsProduct.multiplier;
+        var min = pointsProduct.variable_points_min || 0;
+        var max = pointsProduct.variable_points_max || 0;
+        var step = pointsProduct.variable_points_step;
+        var stepRewardValue = pointsProduct.variable_points_step_reward_value;
         var fulfillmentNameTemplate = reward.fulfillment_name_template;
         var currencySymbol = reward.currency_symbol;
         var initialSliderValue = min;
@@ -57,7 +57,7 @@
         // Cap max slider value at the number of points the customer has
         max = Math.max(SweetTooth.customer.points_balance, max);
 
-        var rewardValue = (initialSliderValue / step) * multiplier;
+        var rewardValue = (initialSliderValue / step) * stepRewardValue;
         var rewardName = fulfillmentNameTemplate.replace("{{format_currency value currency_symbol}}", rewardValue);
         var displayReward = currencySymbol + rewardName;
 
@@ -107,7 +107,7 @@
          */
         $pointsSlider.on('input change', '.sweettooth-range-input', function() {
           var sliderValue = $(this).val();
-          var rewardValue = (sliderValue / step) * multiplier;
+          var rewardValue = (sliderValue / step) * stepRewardValue;
 
           /**
            * Update points to be spent based on slider value
