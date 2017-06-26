@@ -31,6 +31,15 @@
 
       return $sliderContainer;
     };
+    
+    /**
+     * Create a name that will exist and update under the points slider.
+     * Developers should update this to reflect their reward value and 
+     * currency. 
+     */
+    var generatedFulfilledRewardNameFromValue = function(value) {
+      return '$' + value + ' off';
+    };
 
     $(document).on('sweettooth-initialized', function() {
 
@@ -54,10 +63,10 @@
         var initialSliderValue = min;
 
         // Cap max slider value at the number of points the customer has
-        max = Math.max(SweetTooth.customer.points_balance, max);
+        max = Math.min(SweetTooth.customer.points_balance, max);
 
         var rewardValue = (initialSliderValue / step) * stepRewardValue;
-        var rewardName = '$' + rewardValue + ' off';
+        var rewardName = generatedFulfilledRewardNameFromValue(rewardValue);
 
         var sliderHtml = ' \
           <div class="sweettooth-redeem-amount-label">Redeem <span class="sweettooth-slider-value">' + initialSliderValue + '</span> points</div> \
@@ -115,7 +124,7 @@
           /**
            * Update reward name based on the slider value
            */
-          var rewardName = '$' + rewardValue + ' off';
+          var rewardName = generatedFulfilledRewardNameFromValue(rewardValue);
           $pointsSlider.find('.sweettooth-reward-name').html(rewardName);
 
           /**
