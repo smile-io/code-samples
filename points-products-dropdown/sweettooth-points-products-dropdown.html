@@ -1,3 +1,34 @@
+<style>
+  .sweettooth-points-products-dropdown {
+    margin: 10px 0;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-redeem-label {
+    margin-bottom: 10px;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-form {
+    display: -webkit-flex; /* Safari */
+    display: flex;
+    -webkit-flex-direction: row; /* Safari */
+    flex-direction: row;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-form .sweettooth-select-container {
+    flex-grow: 1;
+    margin-right: 15px;
+    margin-bottom: 20px;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-form .sweettooth-range-input {
+    margin: 20px 0;
+  }
+
+  .sweettooth-points-products-dropdown .sweettooth-redeem-button-container {
+    flex-shrink: 1;
+  }
+</style>
+
 <script>
   (function() {
     /**
@@ -110,7 +141,7 @@
             // Update customer's points balance based on the server's value.
             // This should be the same as the above but always nice to confirm.
             SweetTooth.fetchCustomer().then(function(customer) {
-              $('.sweettooth-points-balance').html(customer.points_balance);
+              $('.sweettooth-points-balance').text(customer.points_balance);
             });
           }).catch(function(err) {
             console.error('Something went wrong when purchasing points product with id ' + pointsProductId + '.');
@@ -132,34 +163,3 @@
     });
   }());
 </script>
-
-<style>
-  .sweettooth-points-products-dropdown {
-    margin: 10px 0;
-  }
-
-  .sweettooth-points-products-dropdown .sweettooth-redeem-label {
-    margin-bottom: 10px;
-  }
-
-  .sweettooth-points-products-dropdown .sweettooth-form {
-    display: -webkit-flex; /* Safari */
-    display: flex;
-    -webkit-flex-direction: row; /* Safari */
-    flex-direction: row;
-  }
-
-  .sweettooth-points-products-dropdown .sweettooth-form .sweettooth-select-container {
-    flex-grow: 1;
-    margin-right: 15px;
-    margin-bottom: 20px;
-  }
-
-  .sweettooth-points-products-dropdown .sweettooth-form .sweettooth-range-input {
-    margin: 20px 0;
-  }
-
-  .sweettooth-points-products-dropdown .sweettooth-redeem-button-container {
-    flex-shrink: 1;
-  }
-</style>
