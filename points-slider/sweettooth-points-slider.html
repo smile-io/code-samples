@@ -99,7 +99,7 @@
          * disabled the 'Redeem' button.
          */ 
          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
-         if (SweetTooth.customer.points_balance < min) {
+         if (SweetTooth.customer.points_balance < min || $pointsSlider.val() < 0) {
            $redeemButton.addClass('btn--disabled');
            $redeemButton.attr('disabled', true);
          }
