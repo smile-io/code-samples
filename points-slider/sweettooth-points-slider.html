@@ -77,7 +77,7 @@
                   <div class="sweettooth-reward-name">' + rewardName + '</div> \
                 </div> \
                 <div class="sweettooth-redeem-button-container"> \
-                  <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default btn--disabled" disabled> \
+                  <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default"> \
                     <span class="btn__content visually-hidden-on-mobile">Redeem</span> \
                     <i class="btn__content shown-on-mobile icon icon--arrow"></i> \
                     <i class="btn__spinner icon icon--button-spinner"></i> \
@@ -93,6 +93,16 @@
          * Add slider html to the points slider container
          */
         $pointsSlider.append(sliderHtml);
+        
+        /**
+         * Check whether the customer can spend points, if not
+         * disabled the 'Redeem' button.
+         */ 
+         var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
+         if (SweetTooth.customer.points_balance < min) {
+           $redeemButton.addClass('btn--disabled');
+           $redeemButton.attr('disabled', true);
+         }
 
         /**
          * Handle slider value change events
