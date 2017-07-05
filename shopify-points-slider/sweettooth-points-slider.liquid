@@ -1,13 +1,66 @@
+<style>
+  .sweettooth-points-balance-heading {
+    margin-bottom: 20px;
+  }
+
+  .sweettooth-redeem-amount-label {
+    padding-bottom: 5px;
+  }
+
+  .sweettooth-points-slider .sweettooth-form {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+  }
+
+  .sweettooth-points-slider .sweettooth-range-input-container {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    margin-right: 5px;
+  }
+
+  .sweettooth-points-slider .sweettooth-range-input-container .sweettooth-range-input {
+    margin: 12px 0;
+  }
+
+  .sweettooth-points-slider .sweettooth-redeem-button-container {
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+  }
+
+  .sweettooth-points-slider .sweettooth-redeem-button {
+    height: 42px;
+  }
+
+  .sweettooth-points-slider .sweettooth-reward-name {
+    text-align: center;
+    padding-top: 5px;
+  }
+
+  .sweettooth-points-slider .sweettooth-range-input {
+    display: block;
+    width: 100%;
+
+    /* Fixes shopify checkout */
+    -webkit-appearance: slider-horizontal;
+  }
+</style>
+
 <script>
   (function() {
     /**
      * REPLACE WITH THE POINTS PRODUCT FROM YOUR ACCOUNT.
-     * Learn more at https://docs.smile.io
+     * Learn more at: https://docs.smile.io/v1.1-private/docs/points-slider-at-checkout.
      */
     var pointsProductId = null;
 
     if (!pointsProductId) {
-      console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io.');
+      console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io/v1.1-private/docs/points-slider-at-checkout.');
       return;
     }
 
@@ -30,6 +83,15 @@
       var $sliderContainer = $($.parseHTML(sliderContainerHtml));
 
       return $sliderContainer;
+    };
+    
+    /**
+     * Create a name that will exist and update under the points slider.
+     * Developers should update this to reflect their reward value and
+     * currency. 
+     */
+    var generateFulfilledRewardNameFromValue = function(value) {
+      return '$' + value + ' off';
     };
 
     $(document).on('sweettooth-initialized', function() {
@@ -54,10 +116,10 @@
         var initialSliderValue = min;
 
         // Cap max slider value at the number of points the customer has
-        max = Math.max(SweetTooth.customer.points_balance, max);
+        max = Math.min(SweetTooth.customer.points_balance, max);
 
         var rewardValue = (initialSliderValue / step) * stepRewardValue;
-        var rewardName = '$' + rewardValue + ' off';
+        var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
 
         var sliderHtml = ' \
           <div class="sweettooth-redeem-amount-label">Redeem <span class="sweettooth-slider-value">' + initialSliderValue + '</span> points</div> \
@@ -121,13 +183,13 @@
           /**
            * Update points to be spent based on slider value
            */
-          $pointsSlider.find('.sweettooth-slider-value').html(sliderValue);
+          $pointsSlider.find('.sweettooth-slider-value').text(sliderValue);
 
           /**
            * Update reward name based on the slider value
            */
-          var rewardName = '$' + rewardValue + ' off';
-          $pointsSlider.find('.sweettooth-reward-name').html(rewardName);
+          var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
+          $pointsSlider.find('.sweettooth-reward-name').text(rewardName);
 
           /**
            * Ensure the redeem button is disabled if the slider
@@ -166,12 +228,12 @@
             $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
 
             // Immediately update the customers points balance
-            $('.sweettooth-points-balance').html(SweetTooth.customer.points_balance - sliderValue);
+            $('.sweettooth-points-balance').text(SweetTooth.customer.points_balance - sliderValue);
 
             // Update customer's points balance based on the server's value.
             // This should be the same as the above but always nice to confirm.
             SweetTooth.fetchCustomer().then(function(customer) {
-              $('.sweettooth-points-balance').html(customer.points_balance);
+              $('.sweettooth-points-balance').text(customer.points_balance);
             });
 
             // Submit the form for the discount code
@@ -198,61 +260,8 @@
         $('.order-summary__section--discount').before($sliderContainer);
 
       }).catch(function(err) {
-        console.error('Something went wrong fetching the Smile.io points product. Points slider will not be rendered. Learn more at https://docs.smile.io');
+        console.error('Something went wrong fetching the Smile.io points product. Points slider will not be rendered. Learn more at https://docs.smile.io/v1.1-private/docs/points-slider-at-checkout.');
       }); // fetchPointsProduct
     });
   }());
 </script>
-
-<style>
-  .sweettooth-points-balance-heading {
-    margin-bottom: 20px;
-  }
-
-  .sweettooth-redeem-amount-label {
-    padding-bottom: 5px;
-  }
-
-  .sweettooth-points-slider .sweettooth-form {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-  }
-
-  .sweettooth-points-slider .sweettooth-range-input-container {
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
-    margin-right: 5px;
-  }
-
-  .sweettooth-points-slider .sweettooth-range-input-container .sweettooth-range-input {
-    margin: 12px 0;
-  }
-
-  .sweettooth-points-slider .sweettooth-redeem-button-container {
-    -ms-flex-negative: 1;
-    flex-shrink: 1;
-  }
-
-  .sweettooth-points-slider .sweettooth-redeem-button {
-    height: 42px;
-  }
-
-  .sweettooth-points-slider .sweettooth-reward-name {
-    text-align: center;
-    padding-top: 5px;
-  }
-
-  .sweettooth-points-slider .sweettooth-range-input {
-    display: block;
-    width: 100%;
-
-    /* Fixes shopify checkout */
-    -webkit-appearance: slider-horizontal;
-  }
-</style>
