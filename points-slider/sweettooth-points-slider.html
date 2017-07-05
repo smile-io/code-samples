@@ -95,8 +95,9 @@
         $pointsSlider.append(sliderHtml);
         
         /**
-         * Check whether the customer can spend points, if not
-         * disabled the 'Redeem' button.
+         * Check whether the customer can spend points or if
+         * the slider has a value of 0. If one of those is true
+         * disable the 'Redeem' button.
          */ 
          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
          if (SweetTooth.customer.points_balance < min || $pointsSlider.val() < 0) {
