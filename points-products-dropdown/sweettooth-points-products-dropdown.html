@@ -50,6 +50,16 @@
       return $sliderContainer;
     };
 
+    /**
+     * This method is meant to automatically apply the discount code to the cart. 
+     * discountCodeInput - the discount code element
+     * discountCode - the discountCode itself
+     * pointsSpent - the value of points that were spent
+     */
+    var applyDiscountCodeToCart = function(discountCodeInput, discountCode, pointsSpent) {
+      // For a developer's implementation
+    };
+
     $(document).on('sweettooth-initialized', function() {
 
       var $dropdownContainer = buildPointsProductsDropdownOrderSummarySection();
@@ -134,7 +144,9 @@
              * for your discount code input and set the value to the discount code 
              * that was just created:
              * $('#discount_code_input').val(pointsPurchase.fulfilled_reward.code);
-             *
+             *             
+             * This is done with the above function:
+             * applyDiscountCodeToCart(discountCodeInput, discountCode, pointsPurchase.points_spent)
              * NOTE: This could also be done via your cart API. 
              */
 
