@@ -112,23 +112,11 @@
       // Apply the discount code to the checkout's form input
       $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
 
-      // Immediately update the customers points balance
-      $('.sweettooth-points-balance').text(SweetTooth.customer.points_balance - pointsPurchase.points_spent);
-
-      /**
-       * Update customer's points balance based on the server's value.
-       * This should be the same as the above but always nice to confirm.
-       */
-      SweetTooth.fetchCustomer().then(function(customer) {
-        $('.sweettooth-points-balance').text(customer.points_balance);
-      });
-
       // Submit the form for the discount code
       $discountCodeInput.closest('form').find('button').click();
     };
 
     $(document).on('sweettooth-initialized', function() {
-
       var $sliderContainer = buildPointsSliderOrderSummarySection();
       var $pointsSlider = $sliderContainer.find('.sweettooth-points-slider');
       var pointsSliderData = $pointsSlider.data();
@@ -249,8 +237,18 @@
             // Clear the field error if there was one previously
             $pointsSlider.find('.field').removeClass('field--error');
 
-            // Automatically apply disconut code to cart.
             applyPointsPurchaseToCart(pointsPurchase);
+            
+            // Immediately update the customers points balance
+            $('.sweettooth-points-balance').text(SweetTooth.customer.points_balance - pointsPurchase.points_spent);
+
+            /**
+             * Update customer's points balance based on the server's value.
+             * This should be the same as the above but always nice to confirm.
+             */
+            SweetTooth.fetchCustomer().then(function(customer) {
+              $('.sweettooth-points-balance').text(customer.points_balance);
+            });
           }).catch(function(err) {
             console.error('Something went wrong when purchasing points product with id ' + pointsProductId + '.');
             $pointsSlider.find('.field').addClass('field--error');
