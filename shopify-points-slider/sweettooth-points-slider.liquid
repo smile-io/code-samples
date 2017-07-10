@@ -115,8 +115,10 @@
       // Immediately update the customers points balance
       $('.sweettooth-points-balance').text(SweetTooth.customer.points_balance - pointsPurchase.points_spent);
 
-      // Update customer's points balance based on the server's value.
-      // This should be the same as the above but always nice to confirm.
+      /**
+       * Update customer's points balance based on the server's value.
+       * This should be the same as the above but always nice to confirm.
+       */
       SweetTooth.fetchCustomer().then(function(customer) {
         $('.sweettooth-points-balance').text(customer.points_balance);
       });
@@ -182,9 +184,7 @@
           </div> \
           ';
 
-        /**
-         * Add slider html to the points slider container
-         */
+        // Add slider html to the points slider container
         $pointsSlider.append(sliderHtml);
         
         /**
@@ -199,7 +199,7 @@
          }
 
         /**
-         * Handle slider value change events
+         * Handle slider value change events. 
          *
          * Listening on two events:
          *   input - To update values as the customer is sliding the slider
@@ -211,14 +211,10 @@
           var sliderValue = $(this).val();
           var rewardValue = (sliderValue / step) * stepRewardValue;
 
-          /**
-           * Update points to be spent based on slider value
-           */
+          // Update points to be spent based on slider value
           $pointsSlider.find('.sweettooth-slider-value').text(sliderValue);
 
-          /**
-           * Update reward name based on the slider value
-           */
+          // Update reward name based on the slider value
           var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
           $pointsSlider.find('.sweettooth-reward-name').text(rewardName);
 
