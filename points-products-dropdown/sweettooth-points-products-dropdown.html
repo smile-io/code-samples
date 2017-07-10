@@ -51,16 +51,35 @@
     };
 
     /**
-     * This method is meant to automatically apply the discount code to the cart. 
-     * discountCodeInput - the discount code element
-     * discountCode - the discountCode itself
-     * pointsSpent - the value of points that were spent
+     * This method is used to automatically apply the discount code to the cart. It 
+     * takes a PointsPurchase object as the argument, documented here: 
+     * https://docs.smile.io. TODO add specific page for this. 
+      * One way to do this is with jQuery. Find the selector for your discount code
+     * input and set the value to the discount code that was just created:
+     * $('.your-discount-code-input-class').val(pointsPurchase.fulfilled_reward.code);
      *
      * NOTE: If you're on BigCommerce, the discount code input textbox has element ID:
      * couponcode; and the apply button has element ID: apply_code. 
      */
-    var applyDiscountCodeToCart = function(discountCodeInput, discountCode, pointsSpent) {
-      // For a developer's implementation
+    var applyPointsPurchaseToCart = function(pointsPurchase) {
+      // NOTE: Developers should replace this with the class of their
+      // discount code input field class
+      var $discountCodeInput = $('.your-discount-code-input-class');
+      
+      // The generated discount code
+      var discountCode = pointsPurchase.fulfilled_reward.code;
+      
+      // Next is to apply this discount code to your cart. This could be completed
+      // via jQuery or your cart's API. 
+
+      // Immediately update the customers points balance
+      $('.sweettooth-points-balance').text(SweetTooth.customer.points_balance - pointsPurchase.points_spent);
+
+      // Update customer's points balance based on the server's value.
+      // This should be the same as the above but always nice to confirm.
+      SweetTooth.fetchCustomer().then(function(customer) {
+        $('.sweettooth-points-balance').text(customer.points_balance);
+      });
     };
 
     $(document).on('sweettooth-initialized', function() {
