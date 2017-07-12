@@ -74,13 +74,12 @@
      * blacklistedPointsProducts array. 
      */
     var filterPointsProducts = function(pointsProducts) {
-      // The array used for unwanted PointsProduct ID's
-      var blacklistedPointsProducts = [5, 7];
+      var hidePointsProductIds = [];
       let filteredPointsProducts = pointsProducts;
       
       for (let i in blacklistedPointsProducts) {
         filteredPointsProducts = filteredPointsProducts.filter(function(x) {
-          return x.id !== blacklistedPointsProducts[i];
+          return x.id !== hidePointsProductIds[i];
         });
       }
       

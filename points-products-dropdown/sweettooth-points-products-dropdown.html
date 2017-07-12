@@ -43,13 +43,12 @@
      * blacklistedPointsProducts array. 
      */
     var filterPointsProducts = function(pointsProducts) {
-      // The array used for unwanted PointsProduct ID's
-      var blacklistedPointsProducts = [];
+      var hidePointsProductIds = [];
       let filteredPointsProducts = pointsProducts;
       
       for (let i in blacklistedPointsProducts) {
         filteredPointsProducts = filteredPointsProducts.filter(function(x) {
-          return x.id !== blacklistedPointsProducts[i];
+          return x.id !== hidePointsProductIds[i];
         });
       }
       
@@ -85,7 +84,7 @@
 
 
     $(document).on('sweettooth-initialized', function() {
-      // Don't show is there is no customer
+      // Don't show if there is no customer
       if (!SweetTooth.customer) {
         return;
       }
