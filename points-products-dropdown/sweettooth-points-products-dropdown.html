@@ -85,6 +85,11 @@
 
 
     $(document).on('sweettooth-initialized', function() {
+      // Don't show is there is no customer
+      if (!SweetTooth.customer) {
+        return;
+      }
+
       var $pointsProductsDropdown = $('.sweettooth-points-products-dropdown');
 
       SweetTooth.fetchPointsProducts({ exchange_type: 'fixed' }).then(function(pointsProducts) {

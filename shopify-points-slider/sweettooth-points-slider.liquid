@@ -69,10 +69,6 @@
       return;
     }
     
-    if (!SweetTooth.customer) {
-      return;
-    }
-
     // Store's currency symbol
     var currencySymbol = '$';
     // The name used for points in your reward program. 
@@ -83,8 +79,8 @@
      * This is built up in memory so we don't add anything to the dom until
      * all html content is populated with data from the API.
      */
-    var buildPointsSliderOrderSummarySection = function() {
-      var customerPointsBalance = SweetTooth.customer.points_balance;
+    var buildPointsSliderOrderSummarySection = function(customer) {
+      var customerPointsBalance = customer.points_balance;
 
       var sliderContainerHtml = ' \
         <div class="order-summary__section order-summary__section--sweettooth-points-slider"> \
@@ -126,7 +122,12 @@
     };
     
     $(document).on('sweettooth-initialized', function() {
-      var $sliderContainer = buildPointsSliderOrderSummarySection();
+      // Don't show if there is no customer
+      if (!SweetTooth.customer) {
+        return;
+      }
+
+      var $sliderContainer = buildPointsSliderOrderSummarySection(SweetTooth.customer);
       var $pointsSlider = $sliderContainer.find('.sweettooth-points-slider');
       var pointsSliderData = $pointsSlider.data();
       var pointsProductId = pointsSliderData.pointsProductId;

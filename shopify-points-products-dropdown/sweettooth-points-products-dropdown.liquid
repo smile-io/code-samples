@@ -36,8 +36,8 @@
      * This is built up in memory so we don't add anything to the dom until
      * all html content is populated with data from the API.
      */
-    var buildPointsProductsDropdownOrderSummarySection = function() {
-      var customerPointsBalance = SweetTooth.customer.points_balance;
+    var buildPointsProductsDropdownOrderSummarySection = function(customer) {
+      var customerPointsBalance = customer.points_balance;
 
       var sliderContainerHtml = ' \
         <div class="order-summary__section order-summary__section--sweettooth-points-products-dropdown"> \
@@ -88,7 +88,12 @@
     };
 
     $(document).on('sweettooth-initialized', function() {
-      var $dropdownContainer = buildPointsProductsDropdownOrderSummarySection();
+      // Don't show if there is no logged in customer
+      if (!SweetTooth.customer) {
+        return;
+      }
+
+      var $dropdownContainer = buildPointsProductsDropdownOrderSummarySection(SweetTooth.customer);
       var $pointsProductsDropdown = $dropdownContainer.find('.sweettooth-points-products-dropdown');
 
       SweetTooth.fetchPointsProducts({ exchange_type: 'fixed' }).then(function(pointsProducts) {

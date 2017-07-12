@@ -98,6 +98,11 @@
     };
 
     $(document).on('sweettooth-initialized', function() {
+      // Don't show if there is no customer
+      if (!SweetTooth.customer) {
+        return;
+      }
+
       var $pointsSlider = $('.sweettooth-points-slider');
       var pointsSliderData = $pointsSlider.data();
       var pointsProductId = pointsSliderData.pointsProductId;
