@@ -31,6 +31,9 @@
 
 <script>
   (function() {
+    // PointsProduct ID's that will be hidden from the dropdown
+    var hidePointsProductIds = [];
+
     /**
      * Build up the order summary section for our points slider to live in.
      * This is built up in memory so we don't add anything to the dom until
@@ -74,10 +77,9 @@
      * blacklistedPointsProducts array. 
      */
     var filterPointsProducts = function(pointsProducts) {
-      var hidePointsProductIds = [];
       let filteredPointsProducts = pointsProducts;
       
-      for (let i in blacklistedPointsProducts) {
+      for (let i in hidePointsProductIds) {
         filteredPointsProducts = filteredPointsProducts.filter(function(x) {
           return x.id !== hidePointsProductIds[i];
         });
