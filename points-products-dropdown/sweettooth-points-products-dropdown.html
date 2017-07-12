@@ -1,30 +1,35 @@
 <style>
-  .sweettooth-points-products-dropdown {
-    margin: 10px 0;
-  }
-
   .sweettooth-points-products-dropdown .sweettooth-redeem-label {
     margin-bottom: 10px;
   }
 
+  .sweettooth-points-balance-heading {
+    margin-bottom: 10px;
+  }
+
+  .sweettooth-redeem-amount-label {
+    padding-bottom: 5px;
+  }
+
   .sweettooth-points-products-dropdown .sweettooth-form {
-    display: -webkit-flex; /* Safari */
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    -webkit-flex-direction: row; /* Safari */
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
   }
 
-  .sweettooth-points-products-dropdown .sweettooth-form .sweettooth-select-container {
+  .sweettooth-points-products-dropdown .sweettooth-select-container {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
-    margin-right: 15px;
-    margin-bottom: 20px;
-  }
-
-  .sweettooth-points-products-dropdown .sweettooth-form .sweettooth-range-input {
-    margin: 20px 0;
+    margin-right: 5px;
   }
 
   .sweettooth-points-products-dropdown .sweettooth-redeem-button-container {
+    -ms-flex-negative: 1;
     flex-shrink: 1;
   }
 </style>
@@ -32,24 +37,25 @@
 <script>
   (function() {
     /**
-     * Build up the order summary section for our points slider to live in.
-     * This is built up in memory so we don't add anything to the dom until
-     * all html content is populated with data from the API.
+     * This function is used as a way to filter out certain PointsProducts
+     * from the dropdown. This is left up to the developer. Just add the 
+     * PointsProduct ID's you don't want to show up to the 
+     * blacklistedPointsProducts array. 
      */
-    var buildPointsProductsDropdownOrderSummarySection = function() {
-      var customerPointsBalance = SweetTooth.customer.points_balance;
-
-      var sliderContainerHtml = ' \
-        <div class="order-summary__section order-summary__section--sweettooth-points-products-dropdown"> \
-          <h3 class="sweettooth-points-balance-heading">You have <span class="sweettooth-points-balance">' + customerPointsBalance + '</span> points</h3> \
-          <div class="sweettooth-points-products-dropdown"></div> \
-        </div> \
-      ';
-      var $sliderContainer = $($.parseHTML(sliderContainerHtml));
-
-      return $sliderContainer;
+    var filterPointsProducts = function(pointsProducts) {
+      // The array used for unwanted PointsProduct ID's
+      var blacklistedPointsProducts = [];
+      let filteredPointsProducts = pointsProducts;
+      
+      for (let i in blacklistedPointsProducts) {
+        filteredPointsProducts = filteredPointsProducts.filter(function(x) {
+          return x.id !== blacklistedPointsProducts[i];
+        });
+      }
+      
+      return filteredPointsProducts;
     };
-
+    
     /**
      * This method is used to automatically apply the discount code to the cart. It 
      * takes a PointsPurchase object as the argument, documented here: 
@@ -77,62 +83,79 @@
        */
     };
 
+
     $(document).on('sweettooth-initialized', function() {
-      var $dropdownContainer = buildPointsProductsDropdownOrderSummarySection();
-      var $pointsProductsDropdown = $dropdownContainer.find('.sweettooth-points-products-dropdown');
+      var $pointsProductsDropdown = $('.sweettooth-points-products-dropdown');
 
       SweetTooth.fetchPointsProducts({ exchange_type: 'fixed' }).then(function(pointsProducts) {
-        let dropdownHtml = `
-        <div class="sweettooth-redeem-label">Redeem points for rewards on this order</div>
-        <div class="fieldset">
+        pointsProducts = filterPointsProducts(pointsProducts);
 
-          <div data-address-field="province" class="field field--required field--show-floating-label">
-            <div class="field__input-btn-wrapper">
-              <div class="field__input-wrapper field__input-wrapper--select">
-                <label class="field__label">Rewards</label>
-                <select placeholder="Rewards" class="sweettooth-points-products-select field__input field__input--select">
-        `;
-
-        let affordableRewards = $.grep(pointsProducts, function(pointsProduct) {
+        var affordableRewards = $.grep(pointsProducts, function(pointsProduct) {
           return (pointsProduct.points_price <= SweetTooth.customer.points_balance);
         });
 
-        let unaffordableRewards = $.grep(pointsProducts, function(pointsProduct) {
+        var unaffordableRewards = $.grep(pointsProducts, function(pointsProduct) {
           return (pointsProduct.points_price > SweetTooth.customer.points_balance);
         });
 
+        var canRedeem = (affordableRewards.length > 0);
+
+        var redeemLabel = canRedeem ?
+          "Redeem points to apply rewards to your order." :
+          "Keep saving to earn rewards on your next order.";
+        
+        // The name used for points in your reward program. 
+        var pointsLabel = 'points';
+        var customerPointsBalance = SweetTooth.customer.points_balance;
+
+        var dropdownHtml = ' \
+        <div class="sweettooth-points-balance-heading">You have <span class="sweettooth-points-balance">' + customerPointsBalance + '</span> ' + pointsLabel + '</div> \
+        <div class="sweettooth-redeem-label">' + redeemLabel + '</div> \
+        <div class="sweettooth-form"> \
+          <div class="sweettooth-select-container"> \
+            <select placeholder="Rewards" class="sweettooth-points-products-select form-control"> \
+        ';
+
         $.each(affordableRewards, function(index, pointsProduct) {
-          let reward = pointsProduct.reward;
-          dropdownHtml += `<option data-id="${pointsProduct.id}" value="${reward.name}">${reward.name} • ${pointsProduct.exchange_description}</option>`;
+          var reward = pointsProduct.reward;
+          dropdownHtml += '<option value="' + pointsProduct.id + '">' + reward.name + ' - ' + pointsProduct.exchange_description + '</option>';
         });
 
         $.each(unaffordableRewards, function(index, pointsProduct) {
-          let reward = pointsProduct.reward;
-          dropdownHtml += `<option data-id="${pointsProduct.id}" value="${reward.name}" disabled>${reward.name} • ${pointsProduct.exchange_description}</option>`;
+          var reward = pointsProduct.reward;
+          dropdownHtml += '<option value="' + pointsProduct.id + '" disabled>' + reward.name + ' - ' + pointsProduct.exchange_description + '</option>';
         });
 
-        dropdownHtml += `
-                </select>
-              </div>
-              <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default"> \
-                <span class="btn__content visually-hidden-on-mobile">Redeem</span>
-                <i class="btn__content shown-on-mobile icon icon--arrow"></i>
-                <i class="btn__spinner icon icon--button-spinner"></i>
-              </button>
-            </div>
-            <p class="field__message field__message--error sweettooth-points-products-dropdown-error">Something went wrong spending your points. Please try again.</p> \
-          </div>
-        </div>
-        `;
+        var disabledClassName = canRedeem ? '' : 'btn--disabled';
+        var disabledAttribute = canRedeem ? '' : 'disabled';
 
-        // Add slider html to the points slider container
+        dropdownHtml += ' \
+            </select> \
+          </div> \
+          <div class="sweettooth-redeem-button-container"> \
+            <button type="submit" class="sweettooth-redeem-button btn btn-primary' + disabledClassName + '" ' + disabledAttribute + '> \
+              Redeem \
+              <i class="btn__content shown-on-mobile icon icon--arrow"></i> \
+              <i class="btn__spinner icon icon--button-spinner"></i> \
+            </button> \
+          </div> \
+        </div> \
+        ';
+
+        // Add dropdown html to the points slider container
         $pointsProductsDropdown.append(dropdownHtml);
+
+        var rewardsExist = (pointsProducts.length > 0);
+
+        if (rewardsExist) {
+          $pointsProductsDropdown.find('.sweettooth-points-products-select').val(pointsProducts[0].id);
+        }
 
         // Handle redeem button click events
         $pointsProductsDropdown.on('click', '.sweettooth-redeem-button', function() {
           var $redeemButton = $(this);
-          let $selectedPointsProduct = $pointsProductsDropdown.find('.sweettooth-points-products-select :selected');
-          let pointsProductId = $selectedPointsProduct.data('id');
+          var $selectedPointsProduct = $pointsProductsDropdown.find('.sweettooth-points-products-select :selected');
+          var pointsProductId = $selectedPointsProduct.data('id');
 
           // Start loading indicator
           $redeemButton.addClass('btn--loading');
@@ -152,10 +175,10 @@
              * This should be the same as the above but always nice to confirm.
              */
             SweetTooth.fetchCustomer().then(function(customer) {
-              $('.sweettooth-points-balance').text(customer.points_balance);
+              $('.sweettooth-points-balance').html(customer.points_balance);
             });
           }).catch(function(err) {
-            console.error('Something went wrong when purchasing points product with id ' + pointsProductId + '.');
+            console.error('Something went wrong when purchasing PointsProduct with ID ' + pointsProductId + '.');
             $pointsProductsDropdown.find('.field').addClass('field--error');
           }).then(function() {
             /**
@@ -166,12 +189,6 @@
             $redeemButton.removeClass('btn--loading');
           });
         });
-
-        /**
-         * Insert the points slider order summary section above the discount code
-         * section.
-         */
-        $('.order-summary__section--discount').before($dropdownContainer);
       }); // fetchPointsProducts
     });
   }());
