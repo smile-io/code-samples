@@ -1,5 +1,5 @@
-<!-- A third party library for improved slider functionality on mobile. 
-     Available at: https://rangetouch.com/. Developers are welcome to host 
+<!-- A third party library for improved slider functionality on mobile.
+     Available at: https://rangetouch.com/. Developers are welcome to host
      this file in place of using RangeTouch's CDN. -->
 <script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
 
@@ -7,23 +7,23 @@
   (function() {
     // Store's currency symbol
     var currencySymbol = '$';
-    // The name used for points in your reward program. 
+    // The name used for points in your reward program.
     var pointsLabel = 'points';
 
 
     /**
      * Create a name that will exist and update under the points slider.
      * Developers should update this to reflect their reward value and
-     * currency. 
+     * currency.
      */
     var generateFulfilledRewardNameFromValue = function(value) {
-      return '$' + value + ' off';
+      return currencySymbol + value + ' off';
     };
 
     /**
-     * This method is used to automatically apply the discount code to the cart. It 
-     * takes a PointsPurchase object as the argument, documented here: 
-     * https://docs.smile.io. TODO add specific page for this. 
+     * This method is used to automatically apply the discount code to the cart. It
+     * takes a PointsPurchase object as the argument, documented here:
+     * https://docs.smile.io. TODO add specific page for this.
       * One way to do this is with jQuery. Find the selector for your discount code
      * input and set the value to the discount code that was just created:
      * $('.your-discount-code-input-class').val(pointsPurchase.fulfilled_reward.code);
@@ -34,13 +34,13 @@
        * discount code input field class.
        */
       var $discountCodeInput = $('.your-discount-code-input-class');
-      
+
       // The generated discount code
       var discountCode = pointsPurchase.fulfilled_reward.code;
-      
+
       /**
        * Next is to apply this discount code to your cart. This could be completed
-       * via jQuery or your cart's API. 
+       * via jQuery or your cart's API.
        */
     };
 
@@ -68,7 +68,7 @@
         var customerPointsBalance = SweetTooth.customer.points_balance;
         var initialSliderValue = min;
 
-        /** 
+        /**
          * Cap max slider value at the minimum value between the number of
          * points the Customer has and the max value of the reward.
          */
@@ -103,12 +103,12 @@
 
         // Add slider html to the points slider container
         $pointsSlider.append(sliderHtml);
-        
+
         /**
          * Check whether the Customer can spend points or if
          * the slider has a value of 0. If one of those is true
          * disable the 'Redeem' button.
-         */ 
+         */
          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
          if (SweetTooth.customer.points_balance < min || $pointsSlider.val() === 0) {
            $redeemButton.addClass('btn--disabled');
@@ -130,11 +130,11 @@
           var rewardValue = (sliderValue / step) * stepRewardValue;
 
           // Update points to be spent based on slider value
-          $pointsSlider.find('.sweettooth-slider-value').html(sliderValue);
+          $pointsSlider.find('.sweettooth-slider-value').text(sliderValue);
 
           // Update reward name based on the slider value
-          var rewardName = generateFulfilledRewardNameFromValue(rewardValue)
-          $pointsSlider.find('.sweettooth-reward-name').html(rewardName);
+          var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
+          $pointsSlider.find('.sweettooth-reward-name').text(rewardName);
 
           /**
            * Ensure the redeem button is disabled if the slider
@@ -168,14 +168,14 @@
             applyPointsPurchaseToCart(pointsPurchase);
 
             // Immediately update the customers points balance
-            $('.sweettooth-points-balance').html(SweetTooth.customer.points_balance - pointsPurchase.points_spent);
+            $('.sweettooth-points-balance').text(SweetTooth.customer.points_balance - pointsPurchase.points_spent);
 
             /**
              * Update customer's points balance based on the server's value.
              * This should be the same as the above but always nice to confirm.
              */
             SweetTooth.fetchCustomer().then(function(customer) {
-              $('.sweettooth-points-balance').html(customer.points_balance);
+              $('.sweettooth-points-balance').text(customer.points_balance);
             });
 
           }).catch(function(err) {
@@ -188,7 +188,7 @@
              */
 
             $redeemButton.removeClass('btn--loading');
-            
+
             var $rangeInput = $pointsSlider.find('.sweettooth-range-input');
             $rangeInput.val(0);
             $rangeInput.change();
@@ -253,10 +253,10 @@
     display: block;
     width: 100%;
   }
-  
+
   @media (max-width: 767px) {
   	.sweettooth-points-slider .sweettooth-form {
-      padding-left: 30px; 
+      padding-left: 30px;
     }
   }
 </style>
