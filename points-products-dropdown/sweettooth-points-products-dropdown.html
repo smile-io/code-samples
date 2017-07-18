@@ -3,6 +3,9 @@
     // PointsProduct ID's that will be hidden from the dropdown
     var hidePointsProductIds = [];
 
+    // The name used for points in your reward program.
+    var pointsLabel = 'points';
+
     /**
      * This function is used as a way to filter out certain PointsProducts
      * from the dropdown. This is left up to the developer. Just add the
@@ -46,7 +49,6 @@
        */
     };
 
-
     $(document).on('sweettooth-initialized', function() {
       // Don't show if there is no customer
       if (!SweetTooth.customer) {
@@ -72,8 +74,6 @@
           "Redeem points to apply rewards to your order." :
           "Keep saving to earn rewards on your next order.";
 
-        // The name used for points in your reward program.
-        var pointsLabel = 'points';
         var customerPointsBalance = SweetTooth.customer.points_balance;
 
         var dropdownHtml = ' \

@@ -3,6 +3,9 @@
     // PointsProduct ID's that will be hidden from the dropdown
     var hidePointsProductIds = [];
 
+    // The name used for points in your reward program.
+    var pointsLabel = 'points';
+
     /**
      * Build up the order summary section for our points slider to live in.
      * This is built up in memory so we don't add anything to the dom until
@@ -69,16 +72,15 @@
       SweetTooth.fetchPointsProducts({ exchange_type: 'fixed' }).then(function(pointsProducts) {
         pointsProducts = filterPointsProducts(pointsProducts);
 
-        let dropdownHtml = `
-        <div class="sweettooth-redeem-label">Redeem points for rewards on this order</div>
-        <div class="fieldset">
-
-          <div data-address-field="province" class="field field--required field--show-floating-label">
-            <div class="field__input-btn-wrapper">
-              <div class="field__input-wrapper field__input-wrapper--select">
-                <label class="field__label">Rewards</label>
-                <select placeholder="Rewards" class="sweettooth-points-products-select field__input field__input--select">
-        `;
+        let dropdownHtml = ' \
+          <div class="sweettooth-redeem-label">Redeem ' + pointsLabel + ' for rewards on this order</div> \
+          <div class="fieldset"> \
+            <div data-address-field="province" class="field field--required field--show-floating-label"> \
+              <div class="field__input-btn-wrapper"> \
+                <div class="field__input-wrapper field__input-wrapper--select"> \
+                  <label class="field__label">Rewards</label> \
+                  <select placeholder="Rewards" class="sweettooth-points-products-select field__input field__input--select"> \
+        ';
 
         let affordableRewards = $.grep(pointsProducts, function(pointsProduct) {
           return (pointsProduct.points_price <= SweetTooth.customer.points_balance);
@@ -98,19 +100,19 @@
           dropdownHtml += `<option data-id="${pointsProduct.id}" value="${reward.name}" disabled>${reward.name} • ${pointsProduct.exchange_description}</option>`;
         });
 
-        dropdownHtml += `
-                </select>
-              </div>
+        dropdownHtml += ' \
+                </select> \
+              </div> \
               <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default"> \
-                <span class="btn__content visually-hidden-on-mobile">Redeem</span>
-                <i class="btn__content shown-on-mobile icon icon--arrow"></i>
-                <i class="btn__spinner icon icon--button-spinner"></i>
-              </button>
-            </div>
+                <span class="btn__content visually-hidden-on-mobile">Redeem</span> \
+                <i class="btn__content shown-on-mobile icon icon--arrow"></i> \
+                <i class="btn__spinner icon icon--button-spinner"></i> \
+              </button> \
+            </div> \
             <p class="field__message field__message--error sweettooth-points-products-dropdown-error">Something went wrong spending your points. Please try again.</p> \
-          </div>
-        </div>
-        `;
+          </div> \
+        </div> \
+        ';
 
         // Add slider html to the points slider container
         $pointsProductsDropdown.append(dropdownHtml);
