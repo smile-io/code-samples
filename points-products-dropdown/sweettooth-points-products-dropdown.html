@@ -2,6 +2,14 @@
   (function() {
     // PointsProduct ID's that will be hidden from the dropdown
     var hidePointsProductIds = [];
+    
+    /** 
+     * The function used in the Array filter to determine if the 
+     * PointsProduct should be hidden. 
+     */
+    var shouldHidePointsProduct = function(pointsProduct, index) {
+      return pointsProduct.id !== hidePointsProductIds[index];
+    };
 
     /**
      * This function is used as a way to filter out certain PointsProducts
@@ -10,13 +18,10 @@
      * hidePointsProductIds array. 
      */
     var filterPointsProducts = function(pointsProducts) {
-
       let filteredPointsProducts = pointsProducts;
       
       for (let i in hidePointsProductIds) {
-        filteredPointsProducts = filteredPointsProducts.filter(function(x) {
-          return x.id !== hidePointsProductIds[i];
-        });
+        filteredPointsProducts = filteredPointsProducts.filter(shouldHidePointsProduct);
       }
       
       return filteredPointsProducts;

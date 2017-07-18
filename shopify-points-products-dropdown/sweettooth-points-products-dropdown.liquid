@@ -39,6 +39,14 @@
       $discountCodeInput.closest('form').find('button').click();
     };
     
+    /** 
+     * The function used in the Array filter to determine if the 
+     * PointsProduct should be hidden. 
+     */
+    var shouldHidePointsProduct = function(pointsProduct, index) {
+      return pointsProduct.id !== hidePointsProductIds[index];
+    };
+
     /**
      * This function is used as a way to filter out certain PointsProducts
      * from the dropdown. This is left up to the developer. Just add the 
@@ -49,9 +57,7 @@
       let filteredPointsProducts = pointsProducts;
       
       for (let i in hidePointsProductIds) {
-        filteredPointsProducts = filteredPointsProducts.filter(function(x) {
-          return x.id !== hidePointsProductIds[i];
-        });
+        filteredPointsProducts = filteredPointsProducts.filter(shouldHidePointsProduct);
       }
       
       return filteredPointsProducts;
