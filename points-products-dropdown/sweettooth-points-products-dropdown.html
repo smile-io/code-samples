@@ -7,8 +7,8 @@
      * The function used in the Array filter to determine if the 
      * PointsProduct should be hidden. 
      */
-    var shouldHidePointsProduct = function(pointsProduct, index) {
-      return pointsProduct.id !== hidePointsProductIds[index];
+    var shouldHidePointsProduct = function(pointsProduct) {
+      return hidePointsProductIds.indexOf(pointsProduct.id) === -1;
     };
 
     // The name used for points in your reward program.
