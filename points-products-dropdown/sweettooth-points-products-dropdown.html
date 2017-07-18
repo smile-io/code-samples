@@ -5,27 +5,27 @@
 
     /**
      * This function is used as a way to filter out certain PointsProducts
-     * from the dropdown. This is left up to the developer. Just add the 
-     * PointsProduct ID's you don't want to show up to the 
-     * hidePointsProductIds array. 
+     * from the dropdown. This is left up to the developer. Just add the
+     * PointsProduct ID's you don't want to show up to the
+     * hidePointsProductIds array.
      */
     var filterPointsProducts = function(pointsProducts) {
 
       let filteredPointsProducts = pointsProducts;
-      
+
       for (let i in hidePointsProductIds) {
         filteredPointsProducts = filteredPointsProducts.filter(function(x) {
           return x.id !== hidePointsProductIds[i];
         });
       }
-      
+
       return filteredPointsProducts;
     };
-    
+
     /**
-     * This method is used to automatically apply the discount code to the cart. It 
-     * takes a PointsPurchase object as the argument, documented here: 
-     * https://docs.smile.io. TODO add specific page for this. 
+     * This method is used to automatically apply the discount code to the cart. It
+     * takes a PointsPurchase object as the argument, documented here:
+     * https://docs.smile.io. TODO add specific page for this.
       * One way to do this is with jQuery. Find the selector for your discount code
      * input and set the value to the discount code that was just created:
      * $('.your-discount-code-input-class').val(pointsPurchase.fulfilled_reward.code);
@@ -36,13 +36,13 @@
        * discount code input field class
        */
       var $discountCodeInput = $('.your-discount-code-input-class');
-      
+
       // The generated discount code
       var discountCode = pointsPurchase.fulfilled_reward.code;
-      
-      /** 
+
+      /**
        * Next is to apply this discount code to your cart. This could be completed
-       * via jQuery or your cart's API. 
+       * via jQuery or your cart's API.
        */
     };
 
@@ -71,8 +71,8 @@
         var redeemLabel = canRedeem ?
           "Redeem points to apply rewards to your order." :
           "Keep saving to earn rewards on your next order.";
-        
-        // The name used for points in your reward program. 
+
+        // The name used for points in your reward program.
         var pointsLabel = 'points';
         var customerPointsBalance = SweetTooth.customer.points_balance;
 
@@ -134,7 +134,7 @@
             $pointsProductsDropdown.find('.field').removeClass('field--error');
 
             applyPointsPurchaseToCart(pointsPurchase);
-            
+
             // Immediately update the customers points balance
             $('.sweettooth-points-balance').text(SweetTooth.customer.points_balance - pointsPurchase.points_spent);
 
@@ -143,7 +143,7 @@
              * This should be the same as the above but always nice to confirm.
              */
             SweetTooth.fetchCustomer().then(function(customer) {
-              $('.sweettooth-points-balance').html(customer.points_balance);
+              $('.sweettooth-points-balance').text(customer.points_balance);
             });
           }).catch(function(err) {
             console.error('Something went wrong when purchasing PointsProduct with ID ' + pointsProductId + '.');

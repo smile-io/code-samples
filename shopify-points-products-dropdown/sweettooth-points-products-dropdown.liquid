@@ -21,13 +21,13 @@
 
       return $sliderContainer;
     };
-    
+
     /**
      * Automatically apply the PointsPurchase to cart. The PointsPurchase
      * object is documented here: https://docs.smile.io. TODO add a specific
-     * page for this. 
-     * This is implemented knowing the specific elements of Shopify's 
-     * checkout page. 
+     * page for this.
+     * This is implemented knowing the specific elements of Shopify's
+     * checkout page.
      */
     var applyPointsPurchaseToCart = function(pointsPurchase) {
       var $discountCodeInput = $('#checkout_reduction_code');
@@ -38,22 +38,22 @@
       // Submit the form for the discount code
       $discountCodeInput.closest('form').find('button').click();
     };
-    
+
     /**
      * This function is used as a way to filter out certain PointsProducts
-     * from the dropdown. This is left up to the developer. Just add the 
-     * PointsProduct ID's you don't want to show up to the 
-     * hidePointsProductIds array. 
+     * from the dropdown. This is left up to the developer. Just add the
+     * PointsProduct ID's you don't want to show up to the
+     * hidePointsProductIds array.
      */
     var filterPointsProducts = function(pointsProducts) {
       let filteredPointsProducts = pointsProducts;
-      
+
       for (let i in hidePointsProductIds) {
         filteredPointsProducts = filteredPointsProducts.filter(function(x) {
           return x.id !== hidePointsProductIds[i];
         });
       }
-      
+
       return filteredPointsProducts;
     };
 
@@ -128,9 +128,9 @@
           SweetTooth.purchasePointsProduct(pointsProductId).then(function(pointsPurchase) {
             // Clear the field error if there was one previously
             $pointsProductsDropdown.find('.field').removeClass('field--error');
-          
+
             applyPointsPurchaseToCart(pointsPurchase);
-            
+
             // Immediately update the customers points balance
             $('.sweettooth-points-balance').text(SweetTooth.customer.points_balance - pointsPurchase.points_spent);
 
