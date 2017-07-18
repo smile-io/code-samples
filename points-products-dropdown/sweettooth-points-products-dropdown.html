@@ -23,9 +23,7 @@
     var filterPointsProducts = function(pointsProducts) {
       let filteredPointsProducts = pointsProducts;
 
-      for (let i in hidePointsProductIds) {
-        filteredPointsProducts = filteredPointsProducts.filter(shouldHidePointsProduct);
-      }
+      filteredPointsProducts = filteredPointsProducts.filter(shouldHidePointsProduct);
 
       return filteredPointsProducts;
     };
