@@ -77,7 +77,7 @@
         var unaffordableRewards = $.grep(pointsProducts, function(pointsProduct) {
           return (pointsProduct.points_price > SweetTooth.customer.points_balance);
         });
-        
+
         var canRedeem = (affordableRewards.length > 0);
 
         var redeemLabel = canRedeem ?
@@ -103,7 +103,7 @@
           var reward = pointsProduct.reward;
           dropdownHtml += '<option value="' + pointsProduct.id + '" disabled>' + reward.name + ' - ' + pointsProduct.exchange_description + '</option>';
         });
-        
+
         var disabledClassName = canRedeem ? '' : 'btn--disabled';
         var disabledAttribute = canRedeem ? '' : 'disabled';
 
