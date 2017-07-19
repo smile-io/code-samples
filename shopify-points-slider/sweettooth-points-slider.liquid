@@ -137,7 +137,8 @@
          * disable the 'Redeem' button.
          */
          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
-         if (SweetTooth.customer.points_balance < min || $pointsSlider.val() === 0) {
+         if (SweetTooth.customer.points_balance < min || rewardValue === 0) {
+           $pointsSlider.find('.sweettooth-reward-name').append('<br /> You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
            $redeemButton.addClass('btn--disabled');
            $redeemButton.attr('disabled', true);
          }
@@ -201,6 +202,9 @@
             SweetTooth.fetchCustomer().then(function(customer) {
               $('.sweettooth-points-balance').text(customer.points_balance);
             });
+            
+            $pointsSlider.find('.sweettooth-redeem-amount-label').text('');
+            $pointsSlider.find('.sweettooth-range-input-container').text('Congrats! Your reward has been applied to the cart.')
           }).catch(function(err) {
             console.error('Something went wrong when purchasing points product with id ' + pointsProductId + '.');
             $pointsSlider.find('.field').addClass('field--error');
@@ -211,12 +215,13 @@
              */
 
             $redeemButton.removeClass('btn--loading');
+            
+            $redeemButton.addClass('btn--disabled');
+            $redeemButton.attr('disabled', true);
 
             var $rangeInput = $pointsSlider.find('.sweettooth-range-input');
             $rangeInput.val(0);
             $rangeInput.change();
-
-            $pointsSlider.find('.sweettooth-range-input').text('Congrats! Your reward has been applied to the cart.')
           });
         });
 

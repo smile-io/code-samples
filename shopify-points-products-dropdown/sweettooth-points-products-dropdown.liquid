@@ -120,6 +120,12 @@
 
         // Add slider html to the points slider container
         $pointsProductsDropdown.append(dropdownHtml);
+        
+        var $redeemButton = $pointsProductsDropdown.find('.sweettooth-redeem-button');
+        if (affordableRewards.length == 0) {
+          $redeemButton.addClass('btn--disabled');
+          $redeemButton.attr('disabled', true);
+        }
 
         // Handle redeem button click events
         $pointsProductsDropdown.on('click', '.sweettooth-redeem-button', function() {
