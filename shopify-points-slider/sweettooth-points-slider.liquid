@@ -3,6 +3,16 @@
      this file in place of using RangeTouch's CDN. -->
 <script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
 
+<!-- Load Storefront.js -->
+<script src="https://cdn.sweettooth.io/assets/storefront.js"></script>
+
+<!-- NOTE: Your theme may or may not come with jQuery, if not
+           uncomment this script to load it on the page -->
+<!-- <script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script> -->
+
 <script>
   (function() {
     /**
@@ -138,7 +148,7 @@
          */
          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
          if (SweetTooth.customer.points_balance < min || rewardValue === 0) {
-           $pointsSlider.find('.sweettooth-reward-name').append('<br /> You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
+           $pointsSlider.find('.sweettooth-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
            $redeemButton.addClass('btn--disabled');
            $redeemButton.attr('disabled', true);
          }
@@ -203,6 +213,10 @@
               $('.sweettooth-points-balance').text(customer.points_balance);
             });
             
+            /**
+             * Replace the points slider with a message about the discount being applied
+             * to the cart.
+             */
             $pointsSlider.find('.sweettooth-redeem-amount-label').text('');
             $pointsSlider.find('.sweettooth-range-input-container').text('Congrats! Your reward has been applied to the cart.')
           }).catch(function(err) {

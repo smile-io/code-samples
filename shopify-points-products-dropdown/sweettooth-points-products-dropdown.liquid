@@ -1,3 +1,13 @@
+<!-- Load Storefront.js -->
+<script src="https://cdn.sweettooth.io/assets/storefront.js"></script>
+
+<!-- NOTE: Your theme may or may not come with jQuery, if not 
+           uncomment this script to load it on the page -->
+<!-- <script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script> -->
+
 <script>
   (function() {
     // PointsProduct ID's that will be hidden from the dropdown
@@ -153,6 +163,18 @@
             SweetTooth.fetchCustomer().then(function(customer) {
               $('.sweettooth-points-balance').text(customer.points_balance);
             });
+            
+            /**
+             * Replace the PointsProducts dropdown with a message about the discount
+             * being applied to the cart. 
+             */
+             $redeemButton.replaceWith($clonedRedeemButton);
+             $clonedRedeemButton.addClass('btn--disabled');
+             $clonedRedeemButton.attr('disabled', true);
+        	
+             var pointsProductsDropdownHeight = $pointsProductsDropdown.find('#pointsProductsDropdown').height();
+             $pointsProductsDropdown.find('#pointsProductsDropdown').replaceWith('<div id="pointsProductsDropdown">Congrats! Your reward has been applied to the cart.</div>');
+             $pointsProductsDropdown.find('#pointsProductsDropdown').height(pointsProductsDropdownHeight);
           }).catch(function(err) {
             console.error('Something went wrong when purchasing points product with id ' + pointsProductId + '.');
             $pointsProductsDropdown.find('.field').addClass('field--error');
