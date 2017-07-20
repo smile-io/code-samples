@@ -140,8 +140,9 @@
         // Handle redeem button click events
         $pointsProductsDropdown.on('click', '.sweettooth-redeem-button', function() {
           var $redeemButton = $(this);
-          let $selectedPointsProduct = $pointsProductsDropdown.find('.sweettooth-points-products-select :selected');
-          let pointsProductId = $selectedPointsProduct.data('id');
+          var $clonedRedeemButton = $redeemButton.clone();
+          var $selectedPointsProduct = $pointsProductsDropdown.find('.sweettooth-points-products-select :selected');
+          var pointsProductId = $selectedPointsProduct.data('id');
 
           // Start loading indicator
           $redeemButton.addClass('btn--loading');
