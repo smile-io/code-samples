@@ -116,8 +116,13 @@
          * disable the 'Redeem' button.
          */
          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
-         if (SweetTooth.customer.points_balance < min || rewardValue === 0) {
-           $pointsSlider.find('.sweettooth-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
+         if (SweetTooth.customer.points_balance < min) {
+           $pointsSlider.find('.sweettooth-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');             
+           $redeemButton.addClass('btn--disabled');
+           $redeemButton.attr('disabled', true);
+         }
+
+         if (rewardValue === 0) {
            $redeemButton.addClass('btn--disabled');
            $redeemButton.attr('disabled', true);
          }
@@ -146,7 +151,7 @@
            * Ensure the redeem button is disabled if the slider
            * value is 0.
            */
-          $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
+          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
           if (rewardValue === 0) {
             $redeemButton.addClass('btn--disabled');
             $redeemButton.attr('disabled', true);
