@@ -178,7 +178,7 @@
              $pointsProductsDropdown.find('#pointsProductsDropdown').replaceWith('<div id="pointsProductsDropdown">Congrats! Your reward has been applied to the cart.</div>');
              $pointsProductsDropdown.find('#pointsProductsDropdown').height(pointsProductsDropdownHeight);
           }).catch(function(err) {
-            console.error('Something went wrong when purchasing points product with id ' + pointsProductId + '.');
+            console.error('Something went wrong when purchasing PointsProduct with id ' + pointsProductId + '.');
             $pointsProductsDropdown.find('.field').addClass('field--error');
           }).then(function() {
             /**

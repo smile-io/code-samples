@@ -90,7 +90,7 @@
 
       SweetTooth.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
         if (pointsProduct.exchange_type !== 'variable') {
-          console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a points product that supports variable reward values. Learn more at https://docs.smile.io/v1/docs/points-slider-at-checkout-in-shopify.");
+          console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values. Learn more at https://docs.smile.io/v1/docs/points-slider-at-checkout-in-shopify.");
           return;
         }
 
@@ -225,7 +225,7 @@
             $pointsSlider.find('.sweettooth-redeem-amount-label').text('');
             $pointsSlider.find('.sweettooth-range-input-container').text('Congrats! Your reward has been applied to the cart.')
           }).catch(function(err) {
-            console.error('Something went wrong when purchasing points product with id ' + pointsProductId + '.');
+            console.error('Something went wrong when purchasing PointsProduct with ID ' + pointsProductId + '.');
             $pointsSlider.find('.field').addClass('field--error');
           }).then(function() {
             /**
@@ -251,7 +251,7 @@
         $('.order-summary__section--discount').before($sliderContainer);
 
       }).catch(function(err) {
-        console.error('Something went wrong fetching the Smile.io points product. Points slider will not be rendered. Learn more at https://docs.smile.io/v/docs/points-slider-at-checkout-in-shopify.');
+        console.error('Something went wrong fetching the Smile.io PointsProduct. Points slider will not be rendered. Learn more at https://docs.smile.io/v1/docs/points-slider-at-checkout-in-shopify.');
       }); // fetchPointsProduct
     });
   }());

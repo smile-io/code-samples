@@ -1,4 +1,4 @@
-# Points Products Dropdown
+# PointsProducts Dropdown
 
 This file will explain how to get setup.
 

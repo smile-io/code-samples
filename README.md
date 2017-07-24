@@ -7,9 +7,9 @@ This repos is home to a growing number of code samples to help integrate Smile d
 ## List of code samples
 
 - Points slider
-- Points products dropdown
+- PointsProducts dropdown
 - Shopify points slider
-- Shopify points products dropdown
+- Shopify PointsProducts dropdown
 
 ## Contributing
 
