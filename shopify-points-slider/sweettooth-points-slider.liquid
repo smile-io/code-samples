@@ -17,12 +17,12 @@
   (function() {
     /**
      * REPLACE WITH THE POINTS PRODUCT FROM YOUR ACCOUNT.
-     * Learn more at: https://docs.smile.io/v1.1-private/docs/points-slider-at-checkout.
+     * Learn more at: https://docs.smile.io/docs/points-slider-at-checkout-in-shopify.
      */
     var pointsProductId = null;
 
     if (!pointsProductId) {
-      console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io/v1.1-private/docs/points-slider-at-checkout.');
+      console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io/docs/points-slider-at-checkout-in-shopify.');
       return;
     }
 
@@ -63,8 +63,7 @@
 
     /**
      * Automatically apply the PointsPurchase to cart. The PointsPurchase
-     * object is documented here: https://docs.smile.io. TODO add a specific
-     * page for this.
+     * object is documented here: https://docs.smile.io/v1/docs/points-product.
      * This is implemented knowing the specific elements of Shopify's
      * checkout page.
      */
@@ -91,7 +90,7 @@
 
       SweetTooth.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
         if (pointsProduct.exchange_type !== 'variable') {
-          console.error("Oops! The Smile.io points product you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a points product that supports variable reward values. Learn more at https://docs.smile.io");
+          console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a points product that supports variable reward values. Learn more at https://docs.smile.io/v1/docs/points-slider-at-checkout-in-shopify.");
           return;
         }
 
@@ -252,7 +251,7 @@
         $('.order-summary__section--discount').before($sliderContainer);
 
       }).catch(function(err) {
-        console.error('Something went wrong fetching the Smile.io points product. Points slider will not be rendered. Learn more at https://docs.smile.io/v1.1-private/docs/points-slider-at-checkout.');
+        console.error('Something went wrong fetching the Smile.io points product. Points slider will not be rendered. Learn more at https://docs.smile.io/v/docs/points-slider-at-checkout-in-shopify.');
       }); // fetchPointsProduct
     });
   }());

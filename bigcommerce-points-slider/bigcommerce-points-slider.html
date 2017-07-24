@@ -29,9 +29,9 @@
     /**
      * This method is used to automatically apply the discount code to the cart. It
      * takes a PointsPurchase object as the argument, documented here:
-     * https://docs.smile.io. TODO add specific page for this.
-      * One way to do this is with jQuery. Find the selector for your discount code
-     * input and set the value to the discount code that was just created:
+     * https://docs.smile.io/v1/docs/points-product. One way to do this is with jQuery.
+     * Find the selector for your discount code input and set the value to the discount
+     * code that was just created:
      * $('.your-discount-code-input-class').val(pointsPurchase.fulfilled_reward.code);
      */
     var applyPointsPurchaseToCart = function(pointsPurchase) {
@@ -62,7 +62,7 @@
 
       SweetTooth.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
         if (pointsProduct.exchange_type !== 'variable') {
-          console.error("Oops! The Smile.io points product you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values. Learn more at https://docs.smile.io");
+          console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values. Learn more at https://docs.smile.io/v1/points-slider-at-bigcommerce-checkout.");
           return;
         }
 
