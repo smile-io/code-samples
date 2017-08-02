@@ -9,7 +9,7 @@
   src="https://code.jquery.com/jquery-1.12.4.min.js"
   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
   crossorigin="anonymous"></script> -->
-  
+
 <script>
   (function() {
     // Store's currency symbol
@@ -117,7 +117,7 @@
          */
          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
          if (SweetTooth.customer.points_balance < min) {
-           $pointsSlider.find('.sweettooth-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');             
+           $pointsSlider.find('.sweettooth-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
            $redeemButton.addClass('btn--disabled');
            $redeemButton.attr('disabled', true);
          }

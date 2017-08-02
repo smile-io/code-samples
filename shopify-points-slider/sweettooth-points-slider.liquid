@@ -96,7 +96,7 @@
 
         var reward = pointsProduct.reward;
         var min = pointsProduct.variable_points_min || 0;
-        var max = pointsProduct.variable_points_max || 0;
+        var max = pointsProduct.variable_points_max || Number.MAX_SAFE_INTEGER;
         var step = pointsProduct.variable_points_step;
         var stepRewardValue = pointsProduct.variable_points_step_reward_value;
         var initialSliderValue = min;
@@ -148,7 +148,7 @@
          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
          var customerPointsBalance = SweetTooth.customer.points_balance;
          if (customerPointsBalance < min) {
-           $pointsSlider.find('.sweettooth-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');             
+           $pointsSlider.find('.sweettooth-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
            $redeemButton.addClass('btn--disabled');
            $redeemButton.attr('disabled', true);
          }
@@ -217,7 +217,7 @@
             SweetTooth.fetchCustomer().then(function(customer) {
               $('.sweettooth-points-balance').text(customer.points_balance);
             });
-            
+
             /**
              * Replace the points slider with a message about the discount being applied
              * to the cart.
@@ -234,7 +234,7 @@
              */
 
             $redeemButton.removeClass('btn--loading');
-            
+
             $redeemButton.addClass('btn--disabled');
             $redeemButton.attr('disabled', true);
 
