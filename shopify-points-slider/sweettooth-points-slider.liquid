@@ -96,13 +96,19 @@
 
         var reward = pointsProduct.reward;
         var min = pointsProduct.variable_points_min || 0;
-        var max = pointsProduct.variable_points_max || Number.MAX_SAFE_INTEGER;
+        // Max defaults to the customers max points balance
+        var max = SweetTooth.customer.points_balance;
         var step = pointsProduct.variable_points_step;
         var stepRewardValue = pointsProduct.variable_points_step_reward_value;
         var initialSliderValue = min;
 
-        // Cap max slider value at the number of points the customer has
-        max = Math.min(SweetTooth.customer.points_balance, max);
+        if (pointsProduct.variable_points_max) {
+          /**
+           * Cap max of the slider as the smaller of the customers points
+           * balance and the pointsProducts variable points max
+           */
+          max = Math.min(pointsProduct.variable_points_max, max);
+        }
 
         var rewardValue = (initialSliderValue / step) * stepRewardValue;
         var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
