@@ -9,10 +9,10 @@
   (function() {
     // PointsProduct ID's that will be hidden from the dropdown
     var hidePointsProductIds = [];
-    
-    /** 
-     * The function used in the Array filter to determine if the 
-     * PointsProduct should be hidden. 
+
+    /**
+     * The function used in the Array filter to determine if the
+     * PointsProduct should be hidden.
      */
     var shouldHidePointsProduct = function(pointsProduct) {
       return hidePointsProductIds.indexOf(pointsProduct.id) === -1;
@@ -123,10 +123,10 @@
         // Add dropdown html to the points slider container
         $pointsProductsDropdown.append(dropdownHtml);
         var $redeemButton = $pointsProductsDropdown.find('.sweettooth-redeem-button');
-        if (affordableRewards.length == 0) {
+        if (affordableRewards.length === 0) {
           $redeemButton.addClass('btn--disabled');
           $redeemButton.attr('disabled', true);
-        }        
+        }
 
         var rewardsExist = (pointsProducts.length > 0);
 
