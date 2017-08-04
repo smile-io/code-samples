@@ -1,7 +1,7 @@
 <!-- Load Storefront.js -->
 <script src="https://cdn.sweettooth.io/assets/storefront.js"></script>
 
-<!-- NOTE: Your theme may or may not come with jQuery, if not 
+<!-- NOTE: Your theme may or may not come with jQuery, if not
            uncomment this script to load it on the page -->
 <!-- <script
   src="https://code.jquery.com/jquery-1.12.4.min.js"
@@ -50,10 +50,10 @@
       // Submit the form for the discount code
       $discountCodeInput.closest('form').find('button').click();
     };
-    
-    /** 
-     * The function used in the Array filter to determine if the 
-     * PointsProduct should be hidden. 
+
+    /**
+     * The function used in the Array filter to determine if the
+     * PointsProduct should be hidden.
      */
     var shouldHidePointsProduct = function(pointsProduct) {
       return hidePointsProductIds.indexOf(pointsProduct.id) === -1;
@@ -105,12 +105,12 @@
 
         $.each(affordableRewards, function(index, pointsProduct) {
           let reward = pointsProduct.reward;
-          dropdownHtml += `<option data-id="${pointsProduct.id}" value="${reward.name}">${reward.name} • ${pointsProduct.exchange_description}</option>`;
+          dropdownHtml += '<option data-id="' + pointsProduct.id + '" value="' + reward.name + '">' + reward.name + ' • ' + pointsProduct.exchange_description + '</option>';
         });
 
         $.each(unaffordableRewards, function(index, pointsProduct) {
           let reward = pointsProduct.reward;
-          dropdownHtml += `<option data-id="${pointsProduct.id}" value="${reward.name}" disabled>${reward.name} • ${pointsProduct.exchange_description}</option>`;
+          dropdownHtml += '<option data-id="' + pointsProduct.id + '" value="' + reward.name + '" disabled>' + reward.name + ' • ' + pointsProduct.exchange_description + '</option>';
         });
 
         dropdownHtml += ' \
@@ -129,7 +129,7 @@
 
         // Add slider html to the points slider container
         $pointsProductsDropdown.append(dropdownHtml);
-        
+
         var $redeemButton = $pointsProductsDropdown.find('.sweettooth-redeem-button');
         if (affordableRewards.length == 0) {
           $redeemButton.addClass('btn--disabled');
@@ -163,17 +163,17 @@
             SweetTooth.fetchCustomer().then(function(customer) {
               $('.sweettooth-points-balance').text(customer.points_balance);
             });
-            
+
             /**
              * Replace the PointsProducts dropdown with a message about the discount
-             * being applied to the cart. 
+             * being applied to the cart.
              */
              $redeemButton.replaceWith($clonedRedeemButton);
              $clonedRedeemButton.addClass('btn--disabled');
              $clonedRedeemButton.attr('disabled', true);
-        	
+
              $pointsProductsDropdown.find('.sweettooth-redeem-label').text('');
-             
+
              var pointsProductsDropdownHeight = $pointsProductsDropdown.find('#pointsProductsDropdown').height();
              $pointsProductsDropdown.find('#pointsProductsDropdown').replaceWith('<div id="pointsProductsDropdown">Congrats! Your reward has been applied to the cart.</div>');
              $pointsProductsDropdown.find('#pointsProductsDropdown').height(pointsProductsDropdownHeight);
