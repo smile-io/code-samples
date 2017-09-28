@@ -73,8 +73,11 @@
       // Apply the discount code to the checkout's form input
       $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
 
+      // Ensure the discount code form submit button is enabled
+      $discountCodeInput.closest('form').find('[type=submit]').removeClass('btn--disabled').prop('disabled', false);
+
       // Submit the form for the discount code
-      $discountCodeInput.closest('form').find('button').click();
+      $discountCodeInput.closest('form').find('[type=submit]').click();
     };
 
     $(document).on('sweettooth-initialized', function() {
