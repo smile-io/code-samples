@@ -52,7 +52,8 @@
 
     $(document).on('sweettooth-initialized', function() {
       // Don't show if there is no customer
-      if (!SweetTooth.customer) {
+      // or the customer is excluded from reward programs
+      if (!SweetTooth.customer || SweetTooth.customer.state === 'disabled') {
         return;
       }
 
