@@ -4,7 +4,7 @@
 <script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
 
 <!-- TODO load lib -->
-<script src="https://<domain>.smile.io/v1/smile-shopify.js"></script>
+<script src="https://js.smile.io/v1/smile-shopify.js"></script>
 
 <!-- NOTE: Your theme may or may not come with jQuery, if not
            uncomment this script to load it on the page -->
@@ -15,15 +15,15 @@
 
 <script>
   (function() {
+    // TODO: Add link to docs.
     /**
      * REPLACE WITH THE POINTS PRODUCT FROM YOUR ACCOUNT.
-     * Learn more at: https://docs.smile.io/docs/points-slider-at-checkout-in-shopify.
      */
     var pointsProductId = null;
 
     if (!pointsProductId) {
-      // TODO update docs link
-      console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs.smile.io/docs/points-slider-at-checkout-in-shopify.');
+      // TODO: Add link to docs.
+      console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout.');
       return;
     }
 
@@ -81,28 +81,31 @@
       $discountCodeInput.closest('form').find('[type=submit]').click();
     };
 
-    // TODO what is this
-    $(document).on('', function() {
+    $(document).on('smile-shopify-loaded', function() {
+      // Initialized Smile.js instance.
+      var smile = SmileShopify.smile;
+
       // Don't show if there is no customer
-      if (!SmileShopify.smile.customer) {
+      if (!smile.customer) {
         return;
       }
 
-      var $sliderContainer = buildPointsSliderOrderSummarySection(SmileShopify.smile.customer);
+      var $sliderContainer = buildPointsSliderOrderSummarySection(smile.customer);
       var $pointsSlider = $sliderContainer.find('.sweettooth-points-slider');
       var pointsSliderData = $pointsSlider.data();
       var pointsProductId = pointsSliderData.pointsProductId;
 
-      SmileShopify.smile.fetchPointsProduct(SmileShopify.channel_key, pointsProductId).then(function(pointsProduct) {
+      smile.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
         if (pointsProduct.exchange_type !== 'variable') {
-          console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values. Learn more at https://docs.smile.io/v1/docs/points-slider-at-checkout-in-shopify.");
+          // TODO: Add link to docs.
+          console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values.");
           return;
         }
 
         var reward = pointsProduct.reward;
         var min = pointsProduct.variable_points_min || 0;
         // Max defaults to the customers max points balance
-        var max = SweetTooth.customer.points_balance;
+        var max = smile.customer.points_balance;
         var step = pointsProduct.variable_points_step;
         var stepRewardValue = pointsProduct.variable_points_step_reward_value;
         var initialSliderValue = min;
@@ -157,7 +160,7 @@
          * disable the 'Redeem' button.
          */
          var $redeemButton = $pointsSlider.find('.sweettooth-redeem-button');
-         var customerPointsBalance = SweetTooth.customer.points_balance;
+         var customerPointsBalance = smile.customer.points_balance;
          if (customerPointsBalance < min) {
            $pointsSlider.find('.sweettooth-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
            $redeemButton.addClass('btn--disabled');
@@ -212,20 +215,20 @@
           $redeemButton.addClass('btn--loading');
 
           // Hit the Smile.io API to spend customer's points
-          SmileShopify.smile.purchasePointsProduct(SmileShopify.channel_key, SmileShopify.smile.customer_auth_token, pointsProductId, { points_to_spend: sliderValue }).then(function(pointsPurchase) {
+          smile.purchasePointsProduct(pointsProductId, { points_to_spend: sliderValue }).then(function(pointsPurchase) {
             // Clear the field error if there was one previously
             $pointsSlider.find('.field').removeClass('field--error');
 
             applyPointsPurchaseToCart(pointsPurchase);
 
             // Immediately update the customers points balance
-            $('.sweettooth-points-balance').text(SweetTooth.customer.points_balance - pointsPurchase.points_spent);
+            $('.sweettooth-points-balance').text(smile.customer.points_balance - pointsPurchase.points_spent);
 
             /**
              * Update customer's points balance based on the server's value.
              * This should be the same as the above but always nice to confirm.
              */
-            SmileShopify.smile.fetchCustomer(SmileShopify.channel_key, SmileShopify.smile.customer.id, SmileShopify.smile.customer_auth_token).then(function(customer) {
+            smile.fetchCustomer().then(function(customer) {
               $('.sweettooth-points-balance').text(customer.points_balance);
             });
 
@@ -262,7 +265,8 @@
         $('.order-summary__section--discount').before($sliderContainer);
 
       }).catch(function(err) {
-        console.error('Something went wrong fetching the Smile.io PointsProduct. Points slider will not be rendered. Learn more at https://docs.smile.io/v1/docs/points-slider-at-checkout-in-shopify.');
+        // TODO: Add link to docs.
+        console.error('Something went wrong fetching the Smile.io PointsProduct. Points slider will not be rendered.');
       }); // fetchPointsProduct
     });
   }());
