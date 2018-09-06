@@ -103,11 +103,11 @@
           ';
 
           let affordableRewards = $.grep(pointsProducts, function(pointsProduct) {
-            return (pointsProduct.points_product.points_price <= smile.customer.points_balance);
+            return (pointsProduct.points_price <= smile.customer.points_balance);
           });
 
           let unaffordableRewards = $.grep(pointsProducts, function(pointsProduct) {
-            return (pointsProduct.points_product.points_price > smile.customer.points_balance);
+            return (pointsProduct.points_price > smile.customer.points_balance);
           });
 
           $.each(affordableRewards, function(index, pointsProduct) {
@@ -117,7 +117,7 @@
 
           $.each(unaffordableRewards, function(index, pointsProduct) {
             let reward = pointsProduct.reward;
-            dropdownHtml += '<option data-id="' + pointsProduct.id + '" value="' + reward.name + '" disabled>' + reward.name + ' • ' + pointsProduct.points_product.exchange_description + '</option>';
+            dropdownHtml += '<option data-id="' + pointsProduct.id + '" value="' + reward.name + '" disabled>' + reward.name + ' • ' + pointsProduct.exchange_description + '</option>';
           });
 
           dropdownHtml += ' \
