@@ -73,6 +73,9 @@
       return filteredPointsProducts;
     };
 
+    // Modify the init element to skip Smile UI.
+    $('.smile-shopify-init').attr('data-skip-smile-ui', 'true');
+
     $(document).on('smile-shopify-loaded', function() {
       SmileShopify.ready().then(function(smileShopifyInstance) {
         // Initialized Smile.js instance.
