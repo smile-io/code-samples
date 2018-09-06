@@ -3,9 +3,6 @@
      this file in place of using RangeTouch's CDN. -->
 <script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
 
-<!-- TODO load lib -->
-<script src="https://js.smile.io/v1/smile-shopify.js"></script>
-
 <!-- NOTE: Your theme may or may not come with jQuery, if not
            uncomment this script to load it on the page -->
 <!-- <script
@@ -80,6 +77,9 @@
       // Submit the form for the discount code
       $discountCodeInput.closest('form').find('[type=submit]').click();
     };
+
+    // Modify the init element to skip Smile UI.
+    $('.smile-shopify-init').attr('data-skip-smile-ui', 'true');
 
     $(document).on('smile-shopify-loaded', function() {
       SmileShopify.ready().then(function(smileShopifyInstance) {
@@ -273,6 +273,8 @@
     });
   }());
 </script>
+
+<script src="https://js.smile.io/v1/smile-shopify.js"></script>
 
 <style>
   .smile-points-balance-heading {
