@@ -1,3 +1,5 @@
+<script src="https://js.smile.io/v1/smile-shopify.js"></script>
+
 <!-- NOTE: Your theme may or may not come with jQuery, if not
            uncomment this script to load it on the page -->
 <!-- <script
@@ -73,13 +75,10 @@
       return filteredPointsProducts;
     };
 
-    // Modify the init element to skip Smile UI.
-    $('.smile-shopify-init').attr('data-skip-smile-ui', 'true');
-
-    $(document).on('smile-shopify-loaded', function() {
-      SmileShopify.ready().then(function(smileShopifyInstance) {
+    $(document).on('smile-ui-loaded', function() {
+      SmileUI.ready().then(function(smileUI) {
         // Initialized Smile.js instance.
-        var smile = smileShopifyInstance.smile;
+        var smile = smileUI.smile;
 
         // Don't show if there is no logged in customer
         if (!smile.customer) {
@@ -207,8 +206,6 @@
     });
   }());
 </script>
-
-<script src="https://js.smile.io/v1/smile-shopify.js"></script>
 
 <style>
   .smile-points-products-dropdown {
