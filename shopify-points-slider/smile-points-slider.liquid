@@ -85,8 +85,8 @@
         // Initialized Smile.js instance.
         var smile = smileUI.smile;
 
-        // Don't show if there is no customer
-        if (!smile.customer) {
+        // Don't show if there is no logged in customer or if the customer is disabled.
+        if (!smile.customer || smile.customer.state === 'disabled') {
           return;
         }
 
