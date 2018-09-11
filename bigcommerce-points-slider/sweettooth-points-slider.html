@@ -1,3 +1,5 @@
+<!-- Smile BigCommerce points slider v0.0.2 -->
+
 <!-- A third party library for improved slider functionality on mobile.
      Available at: https://rangetouch.com/. Developers are welcome to host
      this file in place of using RangeTouch's CDN. -->
@@ -52,7 +54,8 @@
 
     $(document).on('sweettooth-initialized', function() {
       // Don't show if there is no customer
-      if (!SweetTooth.customer) {
+      // or the customer is excluded from reward programs
+      if (!SweetTooth.customer || SweetTooth.customer.state === 'disabled') {
         return;
       }
 

@@ -1,3 +1,5 @@
+<!-- Smile points product dropdown v0.0.2 -->
+
 <!-- NOTE: Your store may not use jQuery, if not uncomment this
            script to load it on the page -->
 <!-- <script
@@ -61,7 +63,8 @@
 
     $(document).on('sweettooth-initialized', function() {
       // Don't show if there is no customer
-      if (!SweetTooth.customer) {
+      // or the customer is excluded from reward programs
+      if (!SweetTooth.customer || SweetTooth.customer.state === 'disabled') {
         return;
       }
 
