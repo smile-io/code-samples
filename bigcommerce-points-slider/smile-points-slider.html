@@ -1,3 +1,10 @@
+<!-- NOTE: You will need to add your public key to the
+  data-channel-key attribute below. -->
+<script class="smile-bigcommerce-init"
+  src="https://js.smile.io/v1/smile-bigcommerce.js"
+  data-channel-key="">
+</script>
+
 <!-- A third party library for improved slider functionality on mobile.
      Available at: https://rangetouch.com/. Developers are welcome to host
      this file in place of using RangeTouch's CDN. -->
@@ -42,7 +49,7 @@
       var $discountCodeInput = $('.your-discount-code-input-class');
 
       // The generated discount code
-      var discountCode = pointsPurchase.fulfilled_reward.code;
+      var discountCode = pointsPurchase.reward_fulfillment.code;
 
       /**
        * Next is to apply this discount code to your cart. This could be completed
