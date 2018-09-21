@@ -1,3 +1,8 @@
+<script class="smile-bigcommerce-init"
+  src="https://js.smile.io/v1/smile-bigcommerce.js"
+  data-channel-key="">
+</script>
+
 <!-- NOTE: Your store may not use jQuery, if not uncomment this
            script to load it on the page -->
 <!-- <script
@@ -51,7 +56,7 @@
       var $discountCodeInput = $('.your-discount-code-input-class');
 
       // The generated discount code
-      var discountCode = pointsPurchase.fulfilled_reward.code;
+      var discountCode = pointsPurchase.reward_fulfillment.code;
 
       /**
        * Next is to apply this discount code to your cart. This could be completed
@@ -71,7 +76,7 @@
 
         var $pointsProductsDropdown = $('.smile-points-products-dropdown');
 
-        smile.fetchPointsProducts({ exchange_type: 'fixed' }).then(function(pointsProducts) {
+        smile.fetchAllPointsProducts({ exchange_type: 'fixed' }).then(function(pointsProducts) {
           pointsProducts = filterPointsProducts(pointsProducts);
 
           var affordableRewards = $.grep(pointsProducts, function(pointsProduct) {
@@ -142,7 +147,7 @@
           $pointsProductsDropdown.on('click', '.smile-redeem-button', function() {
             var $redeemButton = $(this);
             var $selectedPointsProduct = $pointsProductsDropdown.find('.smile-points-products-select :selected');
-            var pointsProductId = $selectedPointsProduct.data('id');
+            var pointsProductId = $selectedPointsProduct.val();
 
             // Start loading indicator
             $redeemButton.addClass('btn--loading');
