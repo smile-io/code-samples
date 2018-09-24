@@ -15,7 +15,7 @@ This file will explain how to get setup.
 
 ### Points dropdown container
 
-Add the following code to your checkout in the location you want to show the points slider.
+Add the following code to your checkout in the location you want to show the points dropdown.
 ```html
 <div class="smile-points-products-dropdown"></div>
 ```

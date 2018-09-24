@@ -19,3 +19,5 @@ Add the following code to your checkout in the location you want to show the poi
 ```html
 <div class="smile-points-slider" data-points-product-id=21></div>
 ```
+
+Be sure to replace `21` with the ID of the points product that you want to use with the slider!
