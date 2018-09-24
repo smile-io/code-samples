@@ -17,7 +17,7 @@ This file will explain how to get setup.
 
 Add the following code to your checkout in the location you want to show the points slider:
 ```html
-<div class="smile-points-slider" data-points-product-id=21></div>
+<div class="smile-points-slider" data-points-product-id="TODO"></div>
 ```
 
-Be sure to replace `21` with the ID of the points product that you want to use with the slider!
+Be sure to replace `TODO` with the ID of the points product that you want to use with the slider!
