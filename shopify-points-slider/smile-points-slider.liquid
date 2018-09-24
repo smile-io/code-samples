@@ -71,7 +71,7 @@
       var $discountCodeInput = $('#checkout_reduction_code');
 
       // Apply the discount code to the checkout's form input
-      $discountCodeInput.val(pointsPurchase.fulfilled_reward.code);
+      $discountCodeInput.val(pointsPurchase.reward_fulfillment.code);
 
       // Ensure the discount code form submit button is enabled
       $discountCodeInput.closest('form').find('[type=submit]').removeClass('btn--disabled').prop('disabled', false);
