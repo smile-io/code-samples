@@ -4,7 +4,7 @@ This file will explain how to get setup.
 
 ## Implementation
 
-1. Create a new **Snippet** in Shopify called `sweettooth-points-products-dropdown.liquid`
+1. Create a new **Snippet** in Shopify called `smile-points-products-dropdown.liquid`
 2. Paste the code from this sample file in your new snippet
 3. Set the PointsProduct ID at the top of the snippet you wish to use for the slider at checkout
 4. Include the following snippet before the closing `</body>` tag of your `checkout.liquid`
@@ -15,6 +15,6 @@ This file will explain how to get setup.
 ### Code to add to your checkout.liquid
 
 ```liquid
-{% include 'sweettooth-initializer' %}
-{% include 'sweettooth-points-products-dropdown' %}
+{% include 'smile-initializer' %}
+{% include 'smile-points-products-dropdown' %}
 ```

@@ -5,7 +5,7 @@ This file will explain how to get setup.
 ## Implementation
 
 1. Ensure you have Smile.io setup on your store
-1. Copy the code in the `sweettooth-points-slider.html` file in this repo
+1. Copy the code in the `smile-points-slider.html` file in this repo
 1. Add the code snippet below to your checkout
 1. Add your public API key to the snippet
 1. Implement adding the discount code to your cart in the `applyPointsPurchaseToCart` callback
@@ -17,5 +17,5 @@ This file will explain how to get setup.
 
 Add the following code to your checkout in the location you want to show the points slider:
 ```html
-<div class="sweettooth-points-slider" data-points-product-id=21></div>
+<div class="smile-points-slider" data-points-product-id=21></div>
 ```
