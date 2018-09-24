@@ -14,15 +14,15 @@
 
 <script>
   (function() {
-    // TODO: Add link to docs.
     /**
      * REPLACE WITH THE POINTS PRODUCT FROM YOUR ACCOUNT.
+     * Learn more at:
+     * https://docs-next.smile.io/install-smile/shopify/guides/points-slider-at-checkout
      */
     var pointsProductId = null;
 
     if (!pointsProductId) {
-      // TODO: Add link to docs.
-      console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout.');
+      console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs-next.smile.io/install-smile/shopify/guides/points-slider-at-checkout.');
       return;
     }
 
@@ -97,8 +97,7 @@
 
         smile.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
           if (pointsProduct.exchange_type !== 'variable') {
-            // TODO: Add link to docs.
-            console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values.");
+            console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values. Learn more at https://docs-next.smile.io/install-smile/shopify/guides/points-slider-at-checkout.");
             return;
           }
 
@@ -265,8 +264,7 @@
           $('.order-summary__section--discount').before($sliderContainer);
 
         }).catch(function(err) {
-          // TODO: Add link to docs.
-          console.error('Something went wrong fetching the Smile.io PointsProduct. Points slider will not be rendered.');
+          console.error('Something went wrong fetching the Smile.io PointsProduct. Points slider will not be rendered. Learn more at https://docs-next.smile.io/install-smile/shopify/guides/points-slider-at-checkout.');
         }); // fetchPointsProduct
       });
     });

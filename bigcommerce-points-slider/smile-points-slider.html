@@ -33,13 +33,13 @@
       return currencySymbol + value + ' off';
     };
 
-    // TODO: Add doc link for points product object.
     /**
      * This method is used to automatically apply the discount code to the cart. It
-     * takes a PointsPurchase object as the argument. One way to do this is with jQuery.
-     * Find the selector for your discount code input and set the value to the discount
-     * code that was just created:
-     * $('.your-discount-code-input-class').val(pointsPurchase.fulfilled_reward.code);
+     * takes a PointsPurchase object as the argument, documented here:
+     * https://docs-next.smile.io/extend-smile/front-end-development/object-reference.
+     * One way to do this is with jQuery. Find the selector for your discount code
+     * input and set the value to the discount code that was just created:
+     * $('.your-discount-code-input-class').val(pointsPurchase.reward_fulfillment.code);
      */
     var applyPointsPurchaseToCart = function(pointsPurchase) {
       /**
@@ -73,8 +73,7 @@
 
         smile.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
           if (pointsProduct.exchange_type !== 'variable') {
-            // TODO: Add doc link
-            console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values.");
+            console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values. Learn more at https://docs-next.smile.io/install-smile/bigcommerce/guides/points-slider-at-checkout.");
             return;
           }
 
@@ -226,7 +225,7 @@
           });
 
         }).catch(function(err) {
-          console.error('Something went wrong fetching the Smile.io PointsProduct. Points slider will not be rendered. Learn more at https://docs.smile.io');
+          console.error('Something went wrong fetching the Smile.io PointsProduct. Points slider will not be rendered. Learn more at https://docs-next.smile.io');
         }); // fetchPointsProduct
       });
     });
