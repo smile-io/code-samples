@@ -1,0 +1,290 @@
+<!-- NOTE: You will need to add your public key to the
+  data-channel-key attribute below. -->
+<script class="smile-bigcommerce-init"
+  src="https://js.smile.io/v1/smile-bigcommerce.js"
+  data-channel-key="">
+</script>
+
+<!-- A third party library for improved slider functionality on mobile.
+     Available at: https://rangetouch.com/. Developers are welcome to host
+     this file in place of using RangeTouch's CDN. -->
+<script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
+
+<!-- NOTE: Your store may not use jQuery, if not uncomment this
+           script to load it on the page -->
+<!-- <script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script> -->
+
+<script>
+  (function() {
+    // Store's currency symbol
+    var currencySymbol = '$';
+    // The name used for points in your reward program.
+    var pointsLabel = 'points';
+
+    /**
+     * Create a name that will exist and update under the points slider.
+     * Developers should update this to reflect their reward value and
+     * currency.
+     */
+    var generateFulfilledRewardNameFromValue = function(value) {
+      return currencySymbol + value + ' off';
+    };
+
+    // TODO: Add doc link for points product object.
+    /**
+     * This method is used to automatically apply the discount code to the cart. It
+     * takes a PointsPurchase object as the argument. One way to do this is with jQuery.
+     * Find the selector for your discount code input and set the value to the discount
+     * code that was just created:
+     * $('.your-discount-code-input-class').val(pointsPurchase.fulfilled_reward.code);
+     */
+    var applyPointsPurchaseToCart = function(pointsPurchase) {
+      /**
+       * NOTE: Developers should replace this with the class of their
+       * discount code input field class.
+       */
+      var $discountCodeInput = $('.your-discount-code-input-class');
+
+      // The generated discount code
+      var discountCode = pointsPurchase.reward_fulfillment.code;
+
+      /**
+       * Next is to apply this discount code to your cart. This could be completed
+       * via jQuery or your cart's API.
+       */
+    };
+
+    $(document).on('smile-ui-loaded', function() {
+      SmileUI.ready().then(function(smileUI) {
+        // Initialized Smile.js instance
+        var smile = smileUI.smile;
+
+        // Don't show if there is no customer logged in or if the customer is disabled.
+        if (!smile.customer || smile.customer.state === 'disabled') {
+          return;
+        }
+
+        var $pointsSlider = $('.smile-points-slider');
+        var pointsSliderData = $pointsSlider.data();
+        var pointsProductId = pointsSliderData.pointsProductId;
+
+        smile.fetchPointsProduct(pointsProductId).then(function(pointsProduct) {
+          if (pointsProduct.exchange_type !== 'variable') {
+            // TODO: Add doc link
+            console.error("Oops! The Smile.io PointsProduct you're using for the points slider does not support variable reward values and thus cannot be displayed as a slider. To use the points slider, setup a PointsProduct that supports variable reward values.");
+            return;
+          }
+
+          var reward = pointsProduct.reward;
+          var min = pointsProduct.variable_points_min || 0;
+          // Max defaults to the customers max points balance
+          var max = smile.customer.points_balance;
+          var step = pointsProduct.variable_points_step;
+          var stepRewardValue = pointsProduct.variable_points_step_reward_value;
+          var customerPointsBalance = smile.customer.points_balance;
+          var initialSliderValue = min;
+
+          if (pointsProduct.variable_points_max) {
+            /**
+             * Cap max of the slider as the smaller of the customers points
+             * balance and the pointsProducts variable points max
+             */
+            max = Math.min(pointsProduct.variable_points_max, max);
+          }
+
+          var rewardValue = (initialSliderValue / step) * stepRewardValue;
+          var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
+
+          var sliderHtml = ' \
+            <div class="smile-points-balance-heading">You have <span class="smile-points-balance">' + customerPointsBalance + '</span> ' + pointsLabel + '</div> \
+            <div class="smile-redeem-amount-label">Redeem <span class="smile-slider-value">' + initialSliderValue + '</span> ' + pointsLabel + '</div> \
+            <div class="smile-form"> \
+              <div class="smile-range-input-container"> \
+                <input \
+                  class="smile-range-input" \
+                  type="range" \
+                  min="' + min + '" \
+                  max="' + max + '" \
+                  step="' + step + '" \
+                  value="' + initialSliderValue + '" \
+                  data-orientation="horizontal" \
+                > \
+                <div class="smile-reward-name">' + rewardName + '</div> \
+              </div> \
+              <div class="smile-redeem-button-container"> \
+                <button type="submit" class="smile-redeem-button btn btn-primary" disabled> \
+                  Redeem \
+                </button> \
+              </div> \
+            </div> \
+            ';
+
+          // Add slider html to the points slider container
+          $pointsSlider.append(sliderHtml);
+
+          /**
+           * Check whether the Customer can spend points or if
+           * the slider has a value of 0. If one of those is true
+           * disable the 'Redeem' button.
+           */
+           var $redeemButton = $pointsSlider.find('.smile-redeem-button');
+           if (smile.customer.points_balance < min) {
+             $pointsSlider.find('.smile-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
+             $redeemButton.addClass('btn--disabled');
+             $redeemButton.attr('disabled', true);
+           }
+
+           if (rewardValue === 0) {
+             $redeemButton.addClass('btn--disabled');
+             $redeemButton.attr('disabled', true);
+           }
+
+          /**
+           * Handle slider value change events
+           *
+           * Listening on two events:
+           *   input - To update values as the customer is sliding the slider
+           *   change - To update values when the slider is changed via javascript
+           *
+           * Source: First comment on this answer http://stackoverflow.com/a/19067260/540194
+           */
+          $pointsSlider.on('input change', '.smile-range-input', function() {
+            var sliderValue = $(this).val();
+            var rewardValue = (sliderValue / step) * stepRewardValue;
+
+            // Update points to be spent based on slider value
+            $pointsSlider.find('.smile-slider-value').text(sliderValue);
+
+            // Update reward name based on the slider value
+            var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
+            $pointsSlider.find('.smile-reward-name').text(rewardName);
+
+            /**
+             * Ensure the redeem button is disabled if the slider
+             * value is 0.
+             */
+            var $redeemButton = $pointsSlider.find('.smile-redeem-button');
+            if (rewardValue === 0) {
+              $redeemButton.addClass('btn--disabled');
+              $redeemButton.attr('disabled', true);
+            } else {
+              $redeemButton.removeClass('btn--disabled');
+              $redeemButton.attr('disabled', false);
+            }
+          });
+
+          // Handle redeem button click events
+          $pointsSlider.on('click', '.smile-redeem-button', function() {
+            var $redeemButton = $(this);
+            var sliderValue = $pointsSlider.find('.smile-range-input').val();
+
+            // Start loading indicator
+            $redeemButton.addClass('btn--loading');
+
+            // Hit the Smile.io API to spend a Customer's points
+            smile.purchasePointsProduct(pointsProductId, { points_to_spend: sliderValue }).then(function(pointsPurchase) {
+              // Clear the field error if there was one previously
+              $pointsSlider.find('.field').removeClass('field--error');
+
+              applyPointsPurchaseToCart(pointsPurchase);
+
+              // Immediately update the customers points balance
+              $('.smile-points-balance').text(smile.customer.points_balance - pointsPurchase.points_spent);
+
+              /**
+               * Update customer's points balance based on the server's value.
+               * This should be the same as the above but always nice to confirm.
+               */
+              smile.fetchCustomer().then(function(customer) {
+                $('.smile-points-balance').text(customer.points_balance);
+              });
+
+              /**
+               * Replace the points slider with a message about the discount being applied
+               * to the cart.
+               */
+              $pointsSlider.find('.smile-redeem-amount-label').text('');
+              $pointsSlider.find('.smile-range-input-container').text('Congrats! Your reward has been applied to the cart.');
+            }).catch(function(err) {
+              console.error('Something went wrong when purchasing PointsProduct with ID ' + pointsProductId + '.');
+              $pointsSlider.find('.field').addClass('field--error');
+            }).then(function() {
+              /**
+               * This block runs whether the call succeeds or fails, kind of like finally() in other languages.
+               * Source: http://stackoverflow.com/a/35999141/540194
+               */
+
+              $redeemButton.removeClass('btn--loading');
+
+              var $rangeInput = $pointsSlider.find('.smile-range-input');
+              $rangeInput.val(0);
+              $rangeInput.change();
+            });
+          });
+
+        }).catch(function(err) {
+          console.error('Something went wrong fetching the Smile.io PointsProduct. Points slider will not be rendered. Learn more at https://docs.smile.io');
+        }); // fetchPointsProduct
+      });
+    });
+  }());
+</script>
+
+<style>
+  .smile-points-balance-heading {
+    margin-bottom: 20px;
+  }
+
+  .smile-redeem-amount-label {
+    padding-bottom: 5px;
+  }
+
+  .smile-points-slider .smile-form {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+  }
+
+  .smile-points-slider .smile-range-input-container {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    margin-right: 5px;
+  }
+
+  .smile-points-slider .smile-range-input-container .smile-range-input {
+    margin: 12px 0;
+  }
+
+  .smile-points-slider .smile-redeem-button-container {
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+  }
+
+  .smile-points-slider .smile-redeem-button {
+    height: 42px;
+  }
+
+  .smile-points-slider .smile-reward-name {
+    text-align: center;
+    padding-top: 5px;
+  }
+
+  .smile-points-slider .smile-range-input {
+    display: block;
+    width: 100%;
+  }
+
+  @media (max-width: 767px) {
+  	.smile-points-slider .smile-form {
+      padding-left: 30px;
+    }
+  }
+</style>
