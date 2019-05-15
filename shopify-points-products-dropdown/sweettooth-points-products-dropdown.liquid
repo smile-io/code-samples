@@ -97,7 +97,7 @@
             <div data-address-field="province" class="field field--required field--show-floating-label"> \
               <div class="field__input-btn-wrapper"> \
                 <div class="field__input-wrapper field__input-wrapper--select" id="pointsProductsDropdown"> \
-                  <label class="field__label">Rewards</label> \
+                  <label class="field__label field__label--visible">Rewards</label> \
                   <select placeholder="Rewards" class="sweettooth-points-products-select field__input field__input--select"> \
         ';
 
@@ -121,6 +121,11 @@
 
         dropdownHtml += ' \
                 </select> \
+                <div class="field__caret"> \
+                  <svg class="icon-svg icon-svg--color-adaptive-lighter icon-svg--size-10 field__caret-svg" aria-hidden="true" focusable="false"> \
+                    <use xlink:href="#caret-down"></use> \
+                  </svg> \
+                </div> \
               </div> \
               <button type="submit" class="sweettooth-redeem-button field__input-btn btn btn--default"> \
                 <span class="btn__content">Redeem</span> \
