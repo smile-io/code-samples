@@ -141,7 +141,7 @@
         $pointsProductsDropdown.on('click', '.sweettooth-redeem-button', function() {
           var $redeemButton = $(this);
           var $selectedPointsProduct = $pointsProductsDropdown.find('.sweettooth-points-products-select :selected');
-          var pointsProductId = $selectedPointsProduct.data('id');
+          var pointsProductId = $selectedPointsProduct.val();
 
           // Start loading indicator
           $redeemButton.addClass('btn--loading');
