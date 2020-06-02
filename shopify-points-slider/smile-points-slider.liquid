@@ -1,7 +1,7 @@
 <!-- A third party library for improved slider functionality on mobile.
      Available at: https://rangetouch.com/. Developers are welcome to host
      this file in place of using RangeTouch's CDN. -->
-<script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
+<script src="https://cdn.rangetouch.com/2.0.1/rangetouch.js"></script>
 
 <script src="https://js.smile.io/v1/smile-shopify.js"></script>
 
@@ -152,6 +152,8 @@
 
           // Add slider html to the points slider container
           $pointsSlider.append(sliderHtml);
+
+          var range = new RangeTouch('.smile-points-slider');
 
           /**
            * Check whether the customer can spend points or if
