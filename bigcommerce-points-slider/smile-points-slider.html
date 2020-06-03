@@ -8,7 +8,7 @@
 <!-- A third party library for improved slider functionality on mobile.
      Available at: https://rangetouch.com/. Developers are welcome to host
      this file in place of using RangeTouch's CDN. -->
-<script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
+<script src="https://cdn.rangetouch.com/2.0.1/rangetouch.js"></script>
 
 <!-- NOTE: Your store may not use jQuery, if not uncomment this
            script to load it on the page -->
@@ -123,6 +123,11 @@
 
           // Add slider html to the points slider container
           $pointsSlider.append(sliderHtml);
+
+          // Set up improved touch event handling on the points slider.
+          // This is wrapped in a setTimeout call to ensure the element
+          // is in the DOM before we try setting up RangeTouch on it.
+          window.setTimeout(function() { new RangeTouch('.smile-range-input'); }, 0);
 
           /**
            * Check whether the Customer can spend points or if
