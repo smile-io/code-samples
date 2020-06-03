@@ -153,7 +153,10 @@
           // Add slider html to the points slider container
           $pointsSlider.append(sliderHtml);
 
-          var range = new RangeTouch('.smile-points-slider');
+          // Set up improved touch event handling on the points slider.
+          // This is wrapped in a setTimeout call to ensure the element
+          // is in the DOM before we try setting up RangeTouch on it.
+          setTimeout(function() { new RangeTouch('.smile-range-input'); }, 0);
 
           /**
            * Check whether the customer can spend points or if
