@@ -21,6 +21,8 @@
   (function() {
     // Store's currency symbol
     var currencySymbol = '$';
+    // Currency placement. Can be 'before' or 'after'.
+    var currencyPlacement = 'before';
     // The name used for points in your reward program.
     var pointsLabel = 'points';
 
@@ -30,7 +32,11 @@
      * currency.
      */
     var generateFulfilledRewardNameFromValue = function(value) {
-      return currencySymbol + value + ' off';
+      if (currencyPlacement === 'before') {
+        return currencySymbol + value + ' off';
+      } else {
+        return value + ' ' + currencySymbol + ' off';
+      }
     };
 
     /**
