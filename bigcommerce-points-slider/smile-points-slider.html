@@ -10,6 +10,9 @@
      this file in place of using RangeTouch's CDN. -->
 <script src="https://cdn.rangetouch.com/2.0.1/rangetouch.js"></script>
 
+<!-- A third party library for formatting currencies in multiple locales -->
+<script type="https://cdnjs.com/libraries/currencyformatter.js"></script>
+
 <!-- NOTE: Your store may not use jQuery, if not uncomment this
            script to load it on the page -->
 <!-- <script
@@ -20,9 +23,13 @@
 <script>
   (function() {
     // Store's currency symbol
-    var currencySymbol = '$';
-    // Currency placement. Can be 'before' or 'after'.
-    var currencyPlacement = 'before';
+    var currencyCode = 'USD';
+
+    // Store's currency display type. Can be 'symbol' or 'code'
+    // ex: 'symbol' results in "$15"
+    // ex: 'display' results in "15 USD"
+    var currencyDisplayType = 'symbol';
+
     // The name used for points in your reward program.
     var pointsLabel = 'points';
 
@@ -32,11 +39,15 @@
      * currency.
      */
     var generateFulfilledRewardNameFromValue = function(value) {
-      if (currencyPlacement === 'before') {
-        return currencySymbol + value + ' off';
-      } else {
-        return value + ' ' + currencySymbol + ' off';
+      var pattern = currencyDisplayType === 'code' ? '#,##0' : '!#,##0';
+      var opts = { currency: currencyCode, pattern: pattern };
+      var formatted = OSREC.CurrencyFormatter.format(value, opts);
+
+      if (currencyDisplayType === 'code') {
+        formatted = formatted + ' ' + currencyCode;
       }
+
+      return formatted + ' off';
     };
 
     /**

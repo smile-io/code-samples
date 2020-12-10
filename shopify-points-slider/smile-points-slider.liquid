@@ -3,6 +3,9 @@
      this file in place of using RangeTouch's CDN. -->
 <script src="https://cdn.rangetouch.com/2.0.1/rangetouch.js"></script>
 
+<!-- A third party library for formatting currencies in multiple locales -->
+<script type="https://cdnjs.com/libraries/currencyformatter.js"></script>
+
 <script src="https://js.smile.io/v1/smile-shopify.js"></script>
 
 <!-- NOTE: Your theme may or may not come with jQuery, if not
@@ -21,9 +24,15 @@
      */
     var pointsProductId = null;
     // Store's currency symbol
-    var currencySymbol = '$';
-    // Currency placement. Can be 'before' or 'after'.
-    var currencyPlacement = 'before';
+    var currencyCode = 'USD';
+
+    // Store's currency display type. Can be 'symbol' or 'code'
+    // ex: 'symbol' results in "$15"
+    // ex: 'display' results in "15 USD"
+    var currencyDisplayType = 'symbol';
+
+    // The name used for points in your reward program.
+    var pointsLabel = 'points';
 
     if (!pointsProductId) {
       console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs-next.smile.io/install-smile/shopify/guides/points-slider-at-checkout.');
@@ -60,11 +69,15 @@
      * currency.
      */
     var generateFulfilledRewardNameFromValue = function(value) {
-      if (currencyPlacement === 'before') {
-        return currencySymbol + value + ' off';
-      } else {
-        return value + ' ' + currencySymbol + ' off';
+      var pattern = currencyDisplayType === 'code' ? '#,##0' : '!#,##0';
+      var opts = { currency: currencyCode, pattern: pattern };
+      var formatted = OSREC.CurrencyFormatter.format(value, opts);
+
+      if (currencyDisplayType === 'code') {
+        formatted = formatted + ' ' + currencyCode;
       }
+
+      return formatted + ' off';
     };
 
     /**
