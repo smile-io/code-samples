@@ -31,7 +31,19 @@
     var currencyDisplayType = 'symbol';
 
     // The name used for points in your reward program.
-    var pointsLabel = 'points';
+    var translatePointsLabel = 'points';
+
+    // Message when points reward has been added.
+    var translateRewardAppliedLabel = 'Congrats! Your reward has been applied to the cart.';
+
+    var translateYouHave = 'You have';
+
+    var translateRedeemLabel = 'Redeem';
+
+    // Slider label for when user hasn't added enough slider points for the reward.
+    var translateRewardNameRedeemLabel = function(min, translatePointsLabel) {
+      return 'You need a minimum of ' + min + ' ' + translatePointsLabel + ' to redeem';
+    }
 
     /**
      * Create a name that will exist and update under the points slider.
@@ -115,8 +127,8 @@
           var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
 
           var sliderHtml = ' \
-            <div class="smile-points-balance-heading">You have <span class="smile-points-balance">' + customerPointsBalance + '</span> ' + pointsLabel + '</div> \
-            <div class="smile-redeem-amount-label">Redeem <span class="smile-slider-value">' + initialSliderValue + '</span> ' + pointsLabel + '</div> \
+            <div class="smile-points-balance-heading">' + translateYouHave + ' <span class="smile-points-balance">' + customerPointsBalance + '</span> ' + translatePointsLabel + '</div> \
+            <div class="smile-redeem-amount-label">' + translateRedeemLabel + ' <span class="smile-slider-value">' + initialSliderValue + '</span> ' + translatePointsLabel + '</div> \
             <div class="smile-form"> \
               <div class="smile-range-input-container"> \
                 <input \
@@ -132,7 +144,7 @@
               </div> \
               <div class="smile-redeem-button-container"> \
                 <button type="submit" class="smile-redeem-button btn btn-primary" disabled> \
-                  Redeem \
+                  ' + translateRedeemLabel + ' \
                 </button> \
               </div> \
             </div> \
@@ -153,7 +165,7 @@
            */
            var $redeemButton = $pointsSlider.find('.smile-redeem-button');
            if (smile.customer.points_balance < min) {
-             $pointsSlider.find('.smile-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
+             $pointsSlider.find('.smile-reward-name').text(translateRewardNameRedeemLabel(min, translatePointsLabel));
              $redeemButton.addClass('btn--disabled');
              $redeemButton.attr('disabled', true);
            }
@@ -228,7 +240,7 @@
                * to the cart.
                */
               $pointsSlider.find('.smile-redeem-amount-label').text('');
-              $pointsSlider.find('.smile-range-input-container').text('Congrats! Your reward has been applied to the cart.');
+              $pointsSlider.find('.smile-range-input-container').text(translateRewardAppliedLabel);
             }).catch(function(err) {
               console.error('Something went wrong when purchasing PointsProduct with ID ' + pointsProductId + '.');
               $pointsSlider.find('.field').addClass('field--error');

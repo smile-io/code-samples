@@ -32,15 +32,27 @@
     var currencyDisplayType = 'symbol';
 
     // The name used for points in your reward program.
-    var pointsLabel = 'points';
+    var translatePointsLabel = 'points';
+
+    // Error message to display if the slider errors when applying points value.
+    var translateErrorMessage = 'Something went wrong spending your points. Please try again.';
+
+    // Message when points reward has been added.
+    var translateRewardAppliedLabel = 'Congrats! Your reward has been applied to the cart.';
+
+    var translateYouHave = 'You have';
+
+    var translateRedeem = 'Redeem';
+
+    // Slider label for when user hasn't added enough slider points for the reward.
+    var translateRewardNameRedeemLabel = function(min, translatePointsLabel) {
+      return 'You need a minimum of ' + min + ' ' + translatePointsLabel + ' to redeem';
+    }
 
     if (!pointsProductId) {
       console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs-next.smile.io/install-smile/shopify/guides/points-slider-at-checkout.');
       return;
     }
-
-    // The name used for points in your reward program.
-    var pointsLabel = 'points';
 
     /**
      * Build up the order summary section for our points slider to live in.
@@ -52,7 +64,7 @@
 
       var sliderContainerHtml = ' \
         <div class="order-summary__section order-summary__section--smile-points-slider"> \
-          <h3 class="smile-points-balance-heading">You have <span class="smile-points-balance">' + customerPointsBalance + '</span> ' + pointsLabel + '</h3> \
+          <h3 class="smile-points-balance-heading">' + translateYouHave + '<span class="smile-points-balance">' + customerPointsBalance + '</span> ' + translatePointsLabel + '</h3> \
           <div class="smile-points-slider" \
             data-points-product-id=' + pointsProductId + ' \
           ></div> \
@@ -140,7 +152,7 @@
           var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
 
           var sliderHtml = ' \
-            <div class="smile-redeem-amount-label">Redeem <span class="smile-slider-value">' + initialSliderValue + '</span> ' + pointsLabel + '</div> \
+            <div class="smile-redeem-amount-label">' + translateRedeem + '<span class="smile-slider-value">' + initialSliderValue + '</span> ' + translatePointsLabel + '</div> \
             <div class="fieldset"> \
               <div class="field"> \
                 <div class="smile-form"> \
@@ -158,13 +170,13 @@
                   </div> \
                   <div class="smile-redeem-button-container"> \
                     <button type="submit" class="smile-redeem-button field__input-btn btn btn--default"> \
-                      <span class="btn__content">Redeem</span> \
+                      <span class="btn__content">' + translateRedeem + '</span> \
                       <i class="btn__content shown-on-mobile icon icon--arrow"></i> \
                       <i class="btn__spinner icon icon--button-spinner"></i> \
                     </button> \
                   </div> \
                 </div> \
-                <p class="field__message field__message--error smile-points-slider-error">Something went wrong spending your points. Please try again.</p> \
+                <p class="field__message field__message--error smile-points-slider-error">' + translateErrorMessage + '</p> \
               </div> \
             </div> \
             ';
@@ -185,7 +197,7 @@
            var $redeemButton = $pointsSlider.find('.smile-redeem-button');
            var customerPointsBalance = smile.customer.points_balance;
            if (customerPointsBalance < min) {
-             $pointsSlider.find('.smile-reward-name').text('You need a minimum of ' + min + ' ' + pointsLabel + ' to redeem');
+             $pointsSlider.find('.smile-reward-name').text(translateRewardNameRedeemLabel(min, translatePointsLabel));
              $redeemButton.addClass('btn--disabled');
              $redeemButton.attr('disabled', true);
            }
@@ -260,7 +272,7 @@
                * to the cart.
                */
               $pointsSlider.find('.smile-redeem-amount-label').text('');
-              $pointsSlider.find('.smile-range-input-container').text('Congrats! Your reward has been applied to the cart.')
+              $pointsSlider.find('.smile-range-input-container').text(translateRewardAppliedLabel)
             }).catch(function(err) {
               console.error('Something went wrong when purchasing PointsProduct with ID ' + pointsProductId + '.');
               $pointsSlider.find('.field').addClass('field--error');
