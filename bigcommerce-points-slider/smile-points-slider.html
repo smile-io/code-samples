@@ -11,7 +11,7 @@
 <script src="https://cdn.rangetouch.com/2.0.1/rangetouch.js"></script>
 
 <!-- A third party library for formatting currencies in multiple locales -->
-<script type="https://cdnjs.com/libraries/currencyformatter.js"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/currencyformatter.js/2.2.0/currencyFormatter.min.js"></script>
 
 <!-- NOTE: Your store may not use jQuery, if not uncomment this
            script to load it on the page -->
@@ -45,6 +45,11 @@
       return 'You need a minimum of ' + min + ' ' + translatePointsLabel + ' to redeem';
     }
 
+    // Ex: `$15 off` or `15 CAD off`
+    var translatedDiscount = function(amountFormatted) {
+      return amountFormatted + ' off';
+    }
+
     /**
      * Create a name that will exist and update under the points slider.
      * Developers should update this to reflect their reward value and
@@ -59,7 +64,7 @@
         formatted = formatted + ' ' + currencyCode;
       }
 
-      return formatted + ' off';
+      return translatedDiscount(formatted);
     };
 
     /**

@@ -4,7 +4,7 @@
 <script src="https://cdn.rangetouch.com/2.0.1/rangetouch.js"></script>
 
 <!-- A third party library for formatting currencies in multiple locales -->
-<script type="https://cdnjs.com/libraries/currencyformatter.js"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/currencyformatter.js/2.2.0/currencyFormatter.min.js"></script>
 
 <script src="https://js.smile.io/v1/smile-shopify.js"></script>
 
@@ -49,6 +49,11 @@
       return 'You need a minimum of ' + min + ' ' + translatePointsLabel + ' to redeem';
     }
 
+    // Ex: `$15 off` or `15 CAD off`
+    var translatedDiscount = function(amountFormatted) {
+      return amountFormatted + ' off';
+    }
+
     if (!pointsProductId) {
       console.error('The Smile.io pointsProductId has not been set. Please set this variable in order to show the points slider at checkout. Learn more at https://docs-next.smile.io/install-smile/shopify/guides/points-slider-at-checkout.');
       return;
@@ -89,7 +94,7 @@
         formatted = formatted + ' ' + currencyCode;
       }
 
-      return formatted + ' off';
+      return translatedDiscount(formatted);
     };
 
     /**
