@@ -23,6 +23,7 @@
      * https://docs-next.smile.io/install-smile/shopify/guides/points-slider-at-checkout
      */
     var pointsProductId = null;
+
     // Store's currency symbol
     var currencyCode = 'USD';
 
@@ -31,27 +32,73 @@
     // ex: 'display' results in "15 USD"
     var currencyDisplayType = 'symbol';
 
+    // Label for main button to apply their points value after using the points slider
+    var translateRedeemLabel = 'Redeem';
+
     // The name used for points in your reward program.
     var translatePointsLabel = 'points';
-
-    // Error message to display if the slider errors when applying points value.
-    var translateErrorMessage = 'Something went wrong spending your points. Please try again.';
 
     // Message when points reward has been added.
     var translateRewardAppliedLabel = 'Congrats! Your reward has been applied to the cart.';
 
-    var translateYouHave = 'You have';
+    // This phrase will have SLIDER_VALUE replaced with the points value the customer has currently dragged the slider to
+    // This phrase will also have POINTS_LABEL replaced with your label above.
+    // Do not remove `SLIDER_VALUE` or `POINTS_LABEL` from the phrase, this will happen automatically.
+    var translateRedeemPoints = 'Redeem SLIDER_VALUE POINTS_LABEL';
 
-    var translateRedeem = 'Redeem';
+    // This phrase will have NUMBER_POINTS replaced with the number of points the customer has
+    // This phrase will also have POINTS_LABEL replaced with your label above.
+    // Ex: 'You have NUMBER_POINTS POINTS_LABEL' would show as 'You have 120 points'
+    // Do not remove `NUMBER_POINTS` or `POINTS_LABEL` from the phrase, this will happen automatically.
+    var translatePointsBalance = 'You have NUMBER_POINTS POINTS_LABEL';
 
-    // Slider label for when user hasn't added enough slider points for the reward.
-    var translateRewardNameRedeemLabel = function(min, translatePointsLabel) {
-      return 'You need a minimum of ' + min + ' ' + translatePointsLabel + ' to redeem';
+    // This phrase will have MINIMUM_AMOUNT replaced with the number of points the customer needs to redeem.
+    // This phrase will also have POINTS_LABEL replaced with your label above.
+    // Ex: 'You need a minimum of MINIMUM_AMOUNT POINTS_LABEL to redeem.' would show as 'You need a minimum of 10 points to redeem.'
+    // Do not remove `MINIMUM_AMOUNT` or `POINTS_LABEL` from the phrase, this will happen automatically.
+    var translateRewardNameRedeemLabel = 'You need a minimum of MINIMUM_AMOUNT POINTS_LABEL to redeem.'
+
+    // This phrase will have DISCOUNT_AMOUNT replaced with the currency amount to be discounted.
+    // Ex: 'DISCOUNT_AMOUNT off' would show as '$15 off' or '15 CAD off' depending on your preference above.
+    // Do not remove `DISCOUNT_AMOUNT` from the phrase, this will happen automatically.
+    var translatedDiscount = 'DISCOUNT_AMOUNT off';
+
+    var generateRewardNameRedeemLabel = function(min) {
+      translateRewardNameRedeemLabel = translateRewardNameRedeemLabel.replace('MINIMUM_AMOUNT', min);
+      translateRewardNameRedeemLabel = translateRewardNameRedeemLabel.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
+      return translateRewardNameRedeemLabel;
     }
 
-    // Ex: `$15 off` or `15 CAD off`
-    var translatedDiscount = function(amountFormatted) {
-      return amountFormatted + ' off';
+    var generatePointsBalanceHtml = function(customerPointsBalance) {
+      translatePointsBalance = translatePointsBalance.replace(
+        'NUMBER_POINTS',
+        ` <span class="smile-points-balance">' ${customerPointsBalance} '</span> `
+      );
+
+      translatePointsBalance = translatePointsBalance.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
+      return translatePointsBalance;
+    }
+
+   var generateRedeemAmountLabelHtml = function(initialSliderValue) {
+      translateRedeemPoints = translateRedeemPoints.replace('SLIDER_VALUE', ` <span class="smile-slider-value">' ${initialSliderValue} '</span> `);
+      translateRedeemPoints = translateRedeemPoints.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
+      return translateRedeemPoints;
+    }
+
+    var generateFormattedRewardValue = function(value) {
+      var pattern = currencyDisplayType === 'code' ? '#,##0' : '!#,##0';
+      var opts = { currency: currencyCode, pattern: pattern };
+      var formatted = OSREC.CurrencyFormatter.format(value, opts);
+
+      if (currencyDisplayType === 'code') {
+        formatted = formatted + ' ' + currencyCode;
+      }
+
+      return formatted;
+    };
+
+    var generateRewardName = function(formattedValue) {
+      return translatedDiscount.replace('DISCOUNT_AMOUNT', formattedValue);
     }
 
     if (!pointsProductId) {
@@ -66,10 +113,11 @@
      */
     var buildPointsSliderOrderSummarySection = function(customer) {
       var customerPointsBalance = customer.points_balance;
+      var pointsBalanceHtml = generatePointsBalanceHtml(customerPointsBalance);
 
       var sliderContainerHtml = ' \
         <div class="order-summary__section order-summary__section--smile-points-slider"> \
-          <h3 class="smile-points-balance-heading">' + translateYouHave + '<span class="smile-points-balance">' + customerPointsBalance + '</span> ' + translatePointsLabel + '</h3> \
+          <h3 class="smile-points-balance-heading">' + pointsBalanceHtml + '</h3> \
           <div class="smile-points-slider" \
             data-points-product-id=' + pointsProductId + ' \
           ></div> \
@@ -78,23 +126,6 @@
       var $sliderContainer = $($.parseHTML(sliderContainerHtml));
 
       return $sliderContainer;
-    };
-
-    /**
-     * Create a name that will exist and update under the points slider.
-     * Developers should update this to reflect their reward value and
-     * currency.
-     */
-    var generateFulfilledRewardNameFromValue = function(value) {
-      var pattern = currencyDisplayType === 'code' ? '#,##0' : '!#,##0';
-      var opts = { currency: currencyCode, pattern: pattern };
-      var formatted = OSREC.CurrencyFormatter.format(value, opts);
-
-      if (currencyDisplayType === 'code') {
-        formatted = formatted + ' ' + currencyCode;
-      }
-
-      return translatedDiscount(formatted);
     };
 
     /**
@@ -154,10 +185,11 @@
           }
 
           var rewardValue = (initialSliderValue / step) * stepRewardValue;
-          var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
+          var rewardName = generateRewardName(generateFormattedRewardValue(rewardValue));
+          var redeemAmountLabelHtml = generateRedeemAmountLabelHtml(initialSliderValue);
 
           var sliderHtml = ' \
-            <div class="smile-redeem-amount-label">' + translateRedeem + '<span class="smile-slider-value">' + initialSliderValue + '</span> ' + translatePointsLabel + '</div> \
+            <div class="smile-redeem-amount-label">' + redeemAmountLabelHtml + '</div> \
             <div class="fieldset"> \
               <div class="field"> \
                 <div class="smile-form"> \
@@ -175,7 +207,7 @@
                   </div> \
                   <div class="smile-redeem-button-container"> \
                     <button type="submit" class="smile-redeem-button field__input-btn btn btn--default"> \
-                      <span class="btn__content">' + translateRedeem + '</span> \
+                      <span class="btn__content">' + translateRedeemLabel + '</span> \
                       <i class="btn__content shown-on-mobile icon icon--arrow"></i> \
                       <i class="btn__spinner icon icon--button-spinner"></i> \
                     </button> \
@@ -202,7 +234,7 @@
            var $redeemButton = $pointsSlider.find('.smile-redeem-button');
            var customerPointsBalance = smile.customer.points_balance;
            if (customerPointsBalance < min) {
-             $pointsSlider.find('.smile-reward-name').text(translateRewardNameRedeemLabel(min, translatePointsLabel));
+             $pointsSlider.find('.smile-reward-name').text(generateRewardNameRedeemLabel(min));
              $redeemButton.addClass('btn--disabled');
              $redeemButton.attr('disabled', true);
            }
@@ -229,7 +261,7 @@
             $pointsSlider.find('.smile-slider-value').text(sliderValue);
 
             // Update reward name based on the slider value
-            var rewardName = generateFulfilledRewardNameFromValue(rewardValue);
+            var rewardName = generateRewardName(generateFormattedRewardValue(rewardValue));
             $pointsSlider.find('.smile-reward-name').text(rewardName);
 
             /**
