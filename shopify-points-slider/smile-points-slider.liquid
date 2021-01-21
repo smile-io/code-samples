@@ -64,25 +64,22 @@
     var translatedDiscount = 'DISCOUNT_AMOUNT off';
 
     var generateRewardNameRedeemLabel = function(min) {
-      translateRewardNameRedeemLabel = translateRewardNameRedeemLabel.replace('MINIMUM_AMOUNT', min);
-      translateRewardNameRedeemLabel = translateRewardNameRedeemLabel.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
-      return translateRewardNameRedeemLabel;
+      var label = translateRewardNameRedeemLabel.replace('MINIMUM_AMOUNT', min);
+      return label.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
     }
 
     var generatePointsBalanceHtml = function(customerPointsBalance) {
-      translatePointsBalance = translatePointsBalance.replace(
+      var html = translatePointsBalance.replace(
         'NUMBER_POINTS',
         ` <span class="smile-points-balance">' ${customerPointsBalance} '</span> `
       );
 
-      translatePointsBalance = translatePointsBalance.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
-      return translatePointsBalance;
+      return html.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
     }
 
    var generateRedeemAmountLabelHtml = function(initialSliderValue) {
-      translateRedeemPoints = translateRedeemPoints.replace('SLIDER_VALUE', ` <span class="smile-slider-value">' ${initialSliderValue} '</span> `);
-      translateRedeemPoints = translateRedeemPoints.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
-      return translateRedeemPoints;
+      var html = translateRedeemPoints.replace('SLIDER_VALUE', ` <span class="smile-slider-value">' ${initialSliderValue} '</span> `);
+      return html.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
     }
 
     var generateFormattedRewardValue = function(value) {
