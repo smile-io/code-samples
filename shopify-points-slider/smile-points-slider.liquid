@@ -71,6 +71,9 @@
     // Do not remove `DISCOUNT_AMOUNT` from the phrase, this will happen automatically.
     var translatedDiscount = 'DISCOUNT_AMOUNT off';
 
+    // Optional translation:
+    var translateErrorMessage = 'Something went wrong spending your points. Please try again.';
+
     var generateRewardNameRedeemLabel = function(min) {
       var label = translateRewardNameRedeemLabel.replace('MINIMUM_AMOUNT', min);
       return label.replace('POINTS_LABEL', ` ${translatePointsLabel} `);
